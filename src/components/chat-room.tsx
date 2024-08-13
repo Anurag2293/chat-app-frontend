@@ -1,6 +1,7 @@
 
 "use client"
 
+import { useEffect } from "react"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
@@ -11,6 +12,8 @@ import PhoneIcon from "@/components/icons/phone"
 import SendIcon from "@/components/icons/send"
 import PlusIcon from "@/components/icons/plus"
 import VideoIcon from "@/components/icons/video"
+
+import { useSocketStore } from "@/providers/socket-store-provider";
 
 const chatContacts = [
     {
@@ -52,6 +55,14 @@ const chatContacts = [
 
 
 export default function ChatRoom() {
+    const { socket, setSocket } = useSocketStore(s => s);
+
+    useEffect(() => {
+        if (socket) {
+            console.log("Socket connection on : ", socket.id);
+        }
+    }, [])
+
     return (
         <div className="grid grid-cols-3 md:grid-cols-4 w-full overflow-hidden">
             <div className="bg-muted/20 p-3 border-r hidden md:block">
@@ -93,7 +104,7 @@ export default function ChatRoom() {
                             <AvatarFallback>OM</AvatarFallback>
                         </Avatar>
                         <div className="grid gap-0.5">
-                            <p className="text-sm font-medium leading-none">Sofia Davis</p>
+                            <p className="text-sm font-medium leading-none">Sofia Davis: {socket?.id}</p>
                             <p className="text-xs text-muted-foreground">Active 2h ago</p>
                         </div>
                     </div>

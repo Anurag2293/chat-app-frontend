@@ -23,6 +23,8 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 
+import { useSocketStore } from "@/providers/socket-store-provider";
+
 const formSchema = z.object({
 	room: z.string().min(1, {
 		message: "Enter a valid room name.",
@@ -32,13 +34,16 @@ const formSchema = z.object({
 export default function Home() {
 	const router = useRouter();
 	const { toast } = useToast();
-	const [socket, setSocket] = useState<Socket | null>(null);
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			room: "",
 		},
-	})
+	});
+	const {
+		socket,
+		setSocket
+	} = useSocketStore(state => state);
 
 	useEffect(() => {
 		const initalizeSocket = () => {
@@ -46,7 +51,7 @@ export default function Home() {
 			setSocket(newSocket);
 		}
 		initalizeSocket();
-	}, [])
+	}, []);
 
 	useEffect(() => {
 		if (socket) {
@@ -93,28 +98,30 @@ export default function Home() {
 	}
 
 	return (
-		<div className="w-full md:w-1/2 mx-auto mt-5 p-4 border rounded">
-			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-					<FormField
-						control={form.control}
-						name="room"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Room</FormLabel>
-								<FormControl>
-									<Input placeholder="Enter room..." {...field} />
-								</FormControl>
-								<FormDescription>
-									Enter the room you want to join.
-								</FormDescription>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<Button type="submit">Submit</Button>
-				</form>
-			</Form>
-		</div>
+		<>
+			<div className="w-full md:w-1/2 mx-auto mt-5 p-4 border rounded">
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+						<FormField
+							control={form.control}
+							name="room"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Room</FormLabel>
+									<FormControl>
+										<Input placeholder="Enter room..." {...field} />
+									</FormControl>
+									<FormDescription>
+										Enter the room you want to join.
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<Button type="submit">Submit</Button>
+					</form>
+				</Form>
+			</div>
+		</>
 	)
 }
