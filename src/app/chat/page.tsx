@@ -1,11 +1,6 @@
-import React from 'react'
 
-import ChatRoom from "@/components/chat-room"
-
-const Chat = () => {
-    return (
-        <ChatRoom />
-    )
+const ChatRoom = () => {
+    return <div></div>
 }
 
-export default Chat
+export default ChatRoom

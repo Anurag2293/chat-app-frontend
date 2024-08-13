@@ -1,7 +1,8 @@
 
 "use client"
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,14 +30,29 @@ const OtherChat = ({ children }: { children: React.ReactNode}) => {
     )
 }
 
+type ChatType = { senderID: string, text: string }
+
+// const chatHistory: ChatType[] = []
+
 export default function ChatRoom() {
+    const router = useRouter();
+    const { roomID } = useParams();
     const { socket } = useSocketStore(s => s);
+    const [chatHistory, setChatHistory] = useState<ChatType[]>([]);
 
     useEffect(() => {
         if (socket) {
             console.log("Socket connection on : ", socket.id);
+
+            socket.emit("joined-room", roomID);
+
+            socket.on("join-message", (joinChat: ChatType) => {
+                setChatHistory(p => [...p, joinChat]);
+            })
+        } else {
+            router.push("/"); 
         }
-    }, [])
+    }, []);
 
     return (
         <>
@@ -63,7 +79,13 @@ export default function ChatRoom() {
                 </div>
             </div>
             <div className="grid gap-4 p-3">
-                <SelfChat>
+                {chatHistory.map((chat) => {
+                    if (chat.senderID === socket?.id) {
+                        return <SelfChat>{chat.senderID}: {chat.text}</SelfChat>
+                    }
+                    return <OtherChat>{chat.senderID}: {chat.text}</OtherChat>
+                })}
+                {/* <SelfChat>
                     Hey hope you&apos;re doing well! We should catch up sometime soon. 🙏
                 </SelfChat>
                 <OtherChat>
@@ -74,7 +96,7 @@ export default function ChatRoom() {
                 </SelfChat>
                 <OtherChat>
                     I&apos;ll message you on Saturday.
-                </OtherChat>
+                </OtherChat> */}
             </div>
             <div className="border-t">
                 <form className="flex w-full items-center space-x-2 p-3">

@@ -90,7 +90,7 @@ export default function HomePage() {
                     description: error
                 });
             }
-            router.push("/chat");
+            router.push(`/chat/${values.room}`);
             toast({
                 description: "Joined room successfully!"
             });
