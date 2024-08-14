@@ -45,9 +45,7 @@ const OtherChat = ({ children }: { children: React.ReactNode }) => {
 }
 
 const chatFormSchema = z.object({
-    chatMessage: z.string().min(1, {
-        message: "Enter a valid room name.",
-    }),
+    chatMessage: z.string(),
 });
 
 
@@ -91,6 +89,9 @@ export default function ChatRoom() {
     }, []);
 
     const onSubmit = (values: z.infer<typeof chatFormSchema>) => {
+        if (values.chatMessage.trim().length === 0) {
+            return;
+        }
         if (!socket) {
             return toast({
                 variant: "destructive",
@@ -99,6 +100,10 @@ export default function ChatRoom() {
             });
         }
         socket.emit("send-message", roomID, values.chatMessage);
+        form.setValue("chatMessage", "", {
+            shouldValidate: true,
+            shouldDirty: true
+        });
     }
 
     return (
