@@ -1,14 +1,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import MessageCircleIcon from "./icons/message-circle";
 
-import MessageCircleIcon from "@/components/icons/message-circle";
-import Navbar from "@/components/navbar";
-
-export default function Home() {
-	return (
-		<div className="flex flex-col min-h-[100dvh]">
-			<Navbar />
+export default function FrontPage() {
+    return (
+        <div className="flex flex-col min-h-[100dvh]">
             <header className="bg-primary text-primary-foreground py-6 px-4 md:px-6">
                 <div className="container flex items-center justify-between">
                     <Link href="#" className="flex items-center gap-2" prefetch={false}>
@@ -75,5 +72,5 @@ export default function Home() {
                 </section>
             </main>
         </div>
-	)
+    )
 }
