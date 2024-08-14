@@ -107,8 +107,8 @@ export default function ChatRoom() {
     }
 
     return (
-        <>
-            <div className="p-3 flex border-b items-center">
+        <div className="relative max-h-full">
+            <div className="absolute top-0 p-3 flex border-b items-center">
                 <div className="flex items-center gap-2">
                     <Avatar className="border w-10 h-10">
                         <AvatarImage src="/placeholder-user.jpg" alt="Image" />
@@ -160,6 +160,6 @@ export default function ChatRoom() {
                     </form>
                 </Form>
             </div>
-        </>
+        </div>
     )
 }
