@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect } from "react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -8,8 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 import PlusIcon from "@/components/icons/plus";
-
-import { useSocketStore } from "@/providers/socket-store-provider";
 
 const chatContacts = [
   {
@@ -54,14 +49,6 @@ export default function ChatContactLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // const { socket, setSocket } = useSocketStore((s) => s);
-
-  // useEffect(() => {
-  //   if (socket) {
-  //     console.log("Socket connection on : ", socket.id);
-  //   }
-  // }, [socket]);
-
   return (
     <div className="grid grid-cols-3 md:grid-cols-4 w-full overflow-hidden">
       <div className="bg-muted/20 p-3 border-r hidden md:block">

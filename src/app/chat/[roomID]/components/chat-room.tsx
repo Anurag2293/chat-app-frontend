@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,14 +12,10 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useToast } from "@/components/ui/use-toast";
-import { ToastAction } from "@/components/ui/toast";
 
 import PhoneIcon from "@/components/icons/phone";
 import SendIcon from "@/components/icons/send";
@@ -48,13 +43,9 @@ const chatFormSchema = z.object({
   chatMessage: z.string(),
 });
 
-type ChatType = { senderID: string; text: string };
-
 export default function ChatRoom() {
-  const router = useRouter();
   const { roomID } = useParams();
 
-  const { toast } = useToast();
   const form = useForm<z.infer<typeof chatFormSchema>>({
     resolver: zodResolver(chatFormSchema),
     defaultValues: {
@@ -62,43 +53,10 @@ export default function ChatRoom() {
     },
   });
 
-  const { socket } = useSocketStore((s) => s);
-  const [chatHistory, setChatHistory] = useState<ChatType[]>([]);
-
-  useEffect(() => {
-    const joinSocketRoom = () => {
-      if (socket) {
-        console.log("Socket connection on : ", socket.id);
-
-        socket.emit("joined-room", roomID);
-
-        socket.on("join-message", (joinChat: ChatType) => {
-          setChatHistory((p) => [...p, joinChat]);
-        });
-
-        socket.on("emit-message", (message: ChatType) => {
-          setChatHistory((p) => [...p, message]);
-        });
-      } else {
-        router.push("/");
-      }
-    };
-
-    joinSocketRoom();
-  }, [socket, roomID, router]);
+  const { socket, messages, sendMessageToRoom } = useSocketStore((s) => s);
 
   const onSubmit = (values: z.infer<typeof chatFormSchema>) => {
-    if (values.chatMessage.trim().length === 0) {
-      return;
-    }
-    if (!socket) {
-      return toast({
-        variant: "destructive",
-        title: "Socket connection doesn't exists!",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
-    }
-    socket.emit("send-message", roomID, values.chatMessage);
+    sendMessageToRoom(String(roomID), values.chatMessage);
     form.setValue("chatMessage", "", {
       shouldValidate: true,
       shouldDirty: true,
@@ -106,8 +64,8 @@ export default function ChatRoom() {
   };
 
   return (
-    <div className="relative max-h-full">
-      <div className="absolute top-0 p-3 flex border-b items-center">
+    <div className="relative max-h-full min-h-screen">
+      <div className="p-3 flex border-b items-center">
         <div className="flex items-center gap-2">
           <Avatar className="border w-10 h-10">
             <AvatarImage src="/placeholder-user.jpg" alt="Image" />
@@ -130,7 +88,7 @@ export default function ChatRoom() {
         </div>
       </div>
       <div className="grid gap-4 p-3">
-        {chatHistory.map((chat, index) => {
+        {messages.map((chat, index) => {
           if (chat.senderID === socket?.id) {
             return (
               <SelfChat key={index}>
@@ -145,7 +103,7 @@ export default function ChatRoom() {
           );
         })}
       </div>
-      <div className="border-t">
+      <div className="border-t absolute bottom-0 w-full">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
