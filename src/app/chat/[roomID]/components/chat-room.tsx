@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useParams } from "next/navigation";
 
 import { z } from "zod";
@@ -53,7 +54,12 @@ export default function ChatRoom() {
     },
   });
 
-  const { socket, messages, sendMessageToRoom } = useSocketStore((s) => s);
+  const { socket, messages, sendMessageToRoom, joinSocketRoom } =
+    useSocketStore((s) => s);
+
+  useEffect(() => {
+    joinSocketRoom(String(roomID));
+  }, [roomID, joinSocketRoom]);
 
   const onSubmit = (values: z.infer<typeof chatFormSchema>) => {
     sendMessageToRoom(String(roomID), values.chatMessage);
@@ -64,11 +70,11 @@ export default function ChatRoom() {
   };
 
   return (
-    <div className="relative max-h-full min-h-screen">
+    <div className="relative min-h-full max-h-full h-full">
       <div className="p-3 flex border-b items-center">
         <div className="flex items-center gap-2">
           <Avatar className="border w-10 h-10">
-            <AvatarImage src="/placeholder-user.jpg" alt="Image" />
+            <AvatarImage src="/image3.jpg" alt="Image" />
             <AvatarFallback>OM</AvatarFallback>
           </Avatar>
           <div className="grid gap-0.5">

@@ -56,6 +56,7 @@ export const createSocketStore = (
     });
 
     socket.on("join-message", (joinMessage: ChatType) => {
+      console.log("Join Message!");
       set((state) => ({
         ...state,
         messages: [...state.messages, joinMessage],
@@ -63,6 +64,7 @@ export const createSocketStore = (
     });
 
     socket.on("emit-message", (message: ChatType) => {
+      console.log("Emit Message!");
       set((state) => ({
         ...state,
         messages: [...state.messages, message],
