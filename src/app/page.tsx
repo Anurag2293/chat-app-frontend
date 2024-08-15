@@ -21,11 +21,11 @@ export default function Home() {
                             </p>
                             <div className="flex flex-col gap-2 min-[400px]:flex-row">
                                 <Link
-                                    href="#"
+                                    href="/chat"
                                     className="inline-flex h-10 items-center justify-center rounded-md bg-primary-foreground px-8 text-sm font-medium text-primary border shadow transition-colors hover:bg-primary-foreground/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                                     prefetch={false}
                                 >
-                                    Download App
+                                    Go To Chat
                                 </Link>
                                 <Link
                                     href="#"

@@ -1,7 +1,7 @@
 
 import Link from "next/link";
-import { auth } from "@/auth";
 
+import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -12,8 +12,8 @@ import {
     DropdownMenuItem
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import MessageCircleIcon from "@/components/icons/message-circle";
 
+import MessageCircleIcon from "@/components/icons/message-circle";
 import { SignInButton } from "@/app/components/signin-button";
 import { SignOutButton } from "@/app/components/signout-button";
 import { SignUpButton } from "@/app/components/signup-button";
