@@ -31,7 +31,7 @@ const formSchema = z.object({
     }),
 });
 
-export default function HomePage() {
+export default function JoinRoom() {
     const router = useRouter();
     const { toast } = useToast();
     const form = useForm<z.infer<typeof formSchema>>({
