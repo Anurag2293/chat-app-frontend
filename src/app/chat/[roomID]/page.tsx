@@ -1,10 +1,7 @@
-
-import ChatRoom from "@/components/chat-room"
+import ChatRoom from "@/app/chat/[roomID]/components/chat-room";
 
 const ChatRoomWithID = () => {
-    return (
-        <ChatRoom />
-    )
-}
+  return <ChatRoom />;
+};
 
 export default ChatRoomWithID;

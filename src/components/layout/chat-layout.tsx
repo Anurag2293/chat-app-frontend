@@ -54,13 +54,13 @@ export default function ChatContactLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { socket, setSocket } = useSocketStore((s) => s);
+  // const { socket, setSocket } = useSocketStore((s) => s);
 
-  useEffect(() => {
-    if (socket) {
-      console.log("Socket connection on : ", socket.id);
-    }
-  }, [socket]);
+  // useEffect(() => {
+  //   if (socket) {
+  //     console.log("Socket connection on : ", socket.id);
+  //   }
+  // }, [socket]);
 
   return (
     <div className="grid grid-cols-3 md:grid-cols-4 w-full overflow-hidden">

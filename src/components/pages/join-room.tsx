@@ -39,57 +39,59 @@ export default function JoinRoom() {
       room: "",
     },
   });
-  const { socket, setSocket } = useSocketStore((state) => state);
+  const { socket, joinSocketRoom } = useSocketStore((state) => state);
 
-  useEffect(() => {
-    const initalizeSocket = () => {
-      const newSocket = io("http://localhost:8080");
-      setSocket(newSocket);
-    };
-    initalizeSocket();
-  }, [setSocket]);
+  // useEffect(() => {
+  //   const initalizeSocket = () => {
+  //     const newSocket = io("http://localhost:8080");
+  //     setSocket(newSocket);
+  //   };
+  //   initalizeSocket();
+  // }, [setSocket]);
 
-  useEffect(() => {
-    if (socket) {
-      socket.on("connect", () => {
-        console.log("Connected to server: ", socket.id);
-        return toast({
-          description: "Connected to server: " + socket.id,
-        });
-      });
+  // useEffect(() => {
+  //   if (socket) {
+  //     socket.on("connect", () => {
+  //       console.log("Connected to server: ", socket.id);
+  //       return toast({
+  //         description: "Connected to server: " + socket.id,
+  //       });
+  //     });
 
-      socket.on("disconnect", () => {
-        console.log("Disconnected to server: ", socket.id);
-        return toast({
-          variant: "destructive",
-          description: "Disconnected from server.",
-          // action: <ToastAction altText="Try again">Try again</ToastAction>,
-        });
-      });
-    }
-  }, [socket, setSocket, toast]);
+  //     socket.on("disconnect", () => {
+  //       console.log("Disconnected to server: ", socket.id);
+  //       return toast({
+  //         variant: "destructive",
+  //         description: "Disconnected from server.",
+  //         // action: <ToastAction altText="Try again">Try again</ToastAction>,
+  //       });
+  //     });
+  //   }
+  // }, [socket, setSocket, toast]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!socket) {
-      return toast({
-        variant: "destructive",
-        title: "Socket connection doesn't exists",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
-    }
-    socket.emit("join", values.room, (error: string) => {
-      if (error) {
-        return toast({
-          variant: "destructive",
-          title: "Error joining room!",
-          description: error,
-        });
-      }
-      router.push(`/chat/${values.room}`);
-      toast({
-        description: "Joined room successfully!",
-      });
-    });
+    // joinSocketRoom(values.room);
+    joinSocketRoom(values.room);
+    // if (!socket) {
+    //   return toast({
+    //     variant: "destructive",
+    //     title: "Socket connection doesn't exists",
+    //     action: <ToastAction altText="Try again">Try again</ToastAction>,
+    //   });
+    // }
+    // socket.emit("join", values.room, (error: string) => {
+    //   if (error) {
+    //     return toast({
+    //       variant: "destructive",
+    //       title: "Error joining room!",
+    //       description: error,
+    //     });
+    //   }
+    //   router.push(`/chat/${values.room}`);
+    //   toast({
+    //     description: "Joined room successfully!",
+    //   });
+    // });
   }
 
   return (
