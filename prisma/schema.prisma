@@ -16,9 +16,11 @@ model Message {
 }
 
 model Room {
-  name      String
-  createdAt DateTime @default(now())
-  id        String   @id @default(uuid())
+  id           String   @id @default(uuid())
+  name         String
+  description  String
+  profileImage String?
+  createdAt    DateTime @default(now())
 }
 
 model User {
@@ -29,7 +31,8 @@ model User {
 }
 
 model UserRoom {
-  id     String @id @default(uuid())
-  roomID String
-  userID String
+  id       String   @id @default(uuid())
+  roomID   String
+  userID   String
+  joinedAt DateTime @default(now())
 }
