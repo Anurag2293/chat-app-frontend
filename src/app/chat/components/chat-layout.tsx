@@ -54,10 +54,12 @@ export default function ChatContactLayout({
       <div className="bg-muted/20 p-3 border-r hidden md:block">
         <div className="flex items-center justify-between space-x-4">
           <div className="font-medium text-sm">Chats</div>
-          <Button variant="ghost" size="icon" className="rounded-full w-8 h-8">
-            <PlusIcon className="h-4 w-4" />
-            <span className="sr-only">New chat</span>
-          </Button>
+          <Link href="/create-group">
+            <Button variant="ghost" size="icon" className="rounded-full w-8 h-8">
+              <PlusIcon className="h-4 w-4" />
+              <span className="sr-only">New chat</span>
+            </Button>
+          </Link>
         </div>
         <div className="py-4">
           <form>

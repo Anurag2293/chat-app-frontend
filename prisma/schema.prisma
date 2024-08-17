@@ -16,11 +16,11 @@ model Message {
 }
 
 model Room {
-  id           String   @id @default(uuid())
   name         String
+  createdAt    DateTime @default(now())
+  id           String   @id @default(uuid())
   description  String
   profileImage String?
-  createdAt    DateTime @default(now())
 }
 
 model User {

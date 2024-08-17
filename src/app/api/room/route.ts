@@ -2,17 +2,23 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { auth } from "@/auth";
 
+export const GET = async (request: Request) => {
+  const data = await prisma.room.findMany();
+  NextResponse.json({data});
+}
+
 export const POST = auth(async function POST(request) {
   try {
     if (!request.auth) {
       throw new Error("Not authenticated!");
     }
     const body = await request.json();
-    const { roomName } = body;
+    const { name, description } = body;
 
     const newRoom = await prisma.room.create({
       data: {
-        name: String(roomName),
+        name,
+        description: description
       },
     });
 
