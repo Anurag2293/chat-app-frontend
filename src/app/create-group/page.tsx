@@ -10,5 +10,5 @@ export default async function CreateGroup() {
     return redirect("/chat");
   }
 
-  return <CreateGroupComponent />;
+  return <CreateGroupComponent user={session.user} />;
 }

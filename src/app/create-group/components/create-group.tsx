@@ -1,6 +1,9 @@
 "use client";
 
-import type { User } from "next-auth";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import type { Room } from "@prisma/client";
+import { User } from "next-auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -34,7 +37,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import UploadIcon from "@/components/icons/upload";
-import { postRoom } from "@/api/room";
+import { patchRoomWithProfileImage, postRoom } from "@/api/room";
 import { useToast } from "@/components/ui/use-toast";
 
 import { ProfileImageUploader } from "./upload-profile";
@@ -46,8 +49,15 @@ const createRoomformSchema = z.object({
   description: z.string(),
 });
 
-export default function CreateGroupComponent() {
+type CreateGroupProps = {
+  user: User;
+};
+
+export default function CreateGroupComponent(props: CreateGroupProps) {
+  const router = useRouter();
+  const [profileImageURL, setProfileImageURL] = useState<string>("");
   const { toast } = useToast();
+
   const form = useForm<z.infer<typeof createRoomformSchema>>({
     resolver: zodResolver(createRoomformSchema),
     defaultValues: {
@@ -58,23 +68,44 @@ export default function CreateGroupComponent() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: postRoom,
-    onSuccess: (data) => {
-      console.log({ data });
-      // if (!data.result) {
+    onSuccess: async (result: {
+      success: boolean;
+      message: string;
+      data: Room;
+    }) => {
+      try {
+        console.log({ result });
+        if (!result.success) {
+          throw new Error(result.message);
+        }
 
-      // }
-      toast({
-        title: "Successfully created room!"
-      })
+        // TODO: Update Room with profile image
+        await patchRoomWithProfileImage({
+          roomID: result.data.id,
+          profileImageURL,
+        });
+
+        // TODO: Route to the particular chat room
+        router.push(`/chat/${result.data.id}`);
+
+        toast({
+          title: "Successfully created room!",
+        });
+      } catch (error) {
+        return toast({
+          title: (error as Error).message,
+          variant: "destructive",
+        });
+      }
     },
     onError: (error) => {
       console.log({ error });
       toast({
         title: "Error creating room!",
-        variant: "destructive"
-      })
-    }
-  })
+        variant: "destructive",
+      });
+    },
+  });
 
   function onSubmit(values: z.infer<typeof createRoomformSchema>) {
     console.log(values);
@@ -126,33 +157,23 @@ export default function CreateGroupComponent() {
                 )}
               />
 
-              {/* <div className="grid gap-2 my-4">
-                <Label htmlFor="profile-picture">Profile Picture</Label>
-                <div className="flex items-center gap-2">
-                  <Button type="button" variant="outline" className="flex-1">
-                    <UploadIcon className="mr-2 h-4 w-4" />
-                    Upload Image
-                  </Button>
-                  <div className="flex-1 text-sm text-muted-foreground">
-                    JPG, PNG or GIF up to 1MB
-                  </div>
-                </div>
-              </div> */}
-
-              <ProfileImageUploader />
+              <ProfileImageUploader
+                profileImageURL={profileImageURL}
+                setProfileImageURL={setProfileImageURL}
+              />
             </CardContent>
 
             <CardFooter className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => { }}>
+              <Button variant="outline" onClick={() => {}}>
                 Cancel
               </Button>
-              <Button type="submit">{isPending ? "Creating Group..." : "Create Group"}</Button>
+              <Button type="submit">
+                {isPending ? "Creating Group..." : "Create Group"}
+              </Button>
             </CardFooter>
           </form>
         </Form>
       </Card>
-
-      {/* <MultiUploader /> */}
     </div>
   );
 }
