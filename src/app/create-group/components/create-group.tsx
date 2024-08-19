@@ -37,6 +37,8 @@ import UploadIcon from "@/components/icons/upload";
 import { postRoom } from "@/api/room";
 import { useToast } from "@/components/ui/use-toast";
 
+import { ProfileImageUploader } from "./upload-profile";
+
 const createRoomformSchema = z.object({
   name: z.string().min(1, {
     message: "Enter a valid room name.",
@@ -57,7 +59,7 @@ export default function CreateGroupComponent() {
   const { mutate, isPending } = useMutation({
     mutationFn: postRoom,
     onSuccess: (data) => {
-      console.log({data});
+      console.log({ data });
       // if (!data.result) {
 
       // }
@@ -80,7 +82,7 @@ export default function CreateGroupComponent() {
   }
 
   return (
-    <div className="w-full min-h-screen flex justify-center items-center">
+    <div className="w-full min-h-screen flex flex-col justify-between items-center p-12">
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>
           <CardTitle>Create New Group</CardTitle>
@@ -96,7 +98,7 @@ export default function CreateGroupComponent() {
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem className="my-4">
+                  <FormItem>
                     <FormLabel>Group Name</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter group name" {...field} />
@@ -110,7 +112,7 @@ export default function CreateGroupComponent() {
                 control={form.control}
                 name="description"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="my-4">
                     <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Textarea
@@ -123,6 +125,21 @@ export default function CreateGroupComponent() {
                   </FormItem>
                 )}
               />
+
+              {/* <div className="grid gap-2 my-4">
+                <Label htmlFor="profile-picture">Profile Picture</Label>
+                <div className="flex items-center gap-2">
+                  <Button type="button" variant="outline" className="flex-1">
+                    <UploadIcon className="mr-2 h-4 w-4" />
+                    Upload Image
+                  </Button>
+                  <div className="flex-1 text-sm text-muted-foreground">
+                    JPG, PNG or GIF up to 1MB
+                  </div>
+                </div>
+              </div> */}
+
+              <ProfileImageUploader />
             </CardContent>
 
             <CardFooter className="flex justify-end gap-2">
@@ -134,6 +151,8 @@ export default function CreateGroupComponent() {
           </form>
         </Form>
       </Card>
+
+      {/* <MultiUploader /> */}
     </div>
   );
 }
