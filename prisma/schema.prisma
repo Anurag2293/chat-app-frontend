@@ -13,21 +13,27 @@ model Message {
   roomID  String
   content String
   sentAt  DateTime @default(now())
+  Room    Room     @relation(fields: [roomID], references: [id])
+  User    User     @relation(fields: [userID], references: [id])
 }
 
 model Room {
   name         String
-  createdAt    DateTime @default(now())
-  id           String   @id @default(uuid())
+  createdAt    DateTime   @default(now())
+  id           String     @id @default(uuid())
   description  String
   profileImage String?
+  Message      Message[]
+  UserRoom     UserRoom[]
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String     @id @default(uuid())
   name      String
-  email     String   @unique
-  createdAt DateTime @default(now())
+  email     String     @unique
+  createdAt DateTime   @default(now())
+  Message   Message[]
+  UserRoom  UserRoom[]
 }
 
 model UserRoom {
@@ -35,4 +41,15 @@ model UserRoom {
   roomID   String
   userID   String
   joinedAt DateTime @default(now())
+  role     Role     @default(MEMBER)
+  Room     Room     @relation(fields: [roomID], references: [id])
+  User     User     @relation(fields: [userID], references: [id])
+
+  @@unique([roomID, userID])
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
 }
