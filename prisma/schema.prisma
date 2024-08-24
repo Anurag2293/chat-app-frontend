@@ -7,14 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Message {
-  id      String   @id @default(uuid())
-  userID  String
-  roomID  String
-  content String
-  sentAt  DateTime @default(now())
-  Room    Room     @relation(fields: [roomID], references: [id])
-  User    User     @relation(fields: [userID], references: [id])
+model User {
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique
+  createdAt DateTime   @default(now())
+  groups    UserRoom[]
+  messages  Message[]
 }
 
 model Room {
@@ -23,27 +22,28 @@ model Room {
   id           String     @id @default(uuid())
   description  String
   profileImage String?
-  Message      Message[]
-  UserRoom     UserRoom[]
+  users        UserRoom[]
+  messages     Message[]
 }
 
-model User {
-  id        String     @id @default(uuid())
-  name      String
-  email     String     @unique
-  createdAt DateTime   @default(now())
-  Message   Message[]
-  UserRoom  UserRoom[]
+model Message {
+  id      String   @id @default(uuid())
+  userID  String
+  roomID  String
+  content String
+  sentAt  DateTime @default(now())
+  room    Room     @relation(fields: [roomID], references: [id])
+  user    User     @relation(fields: [userID], references: [id])
 }
 
 model UserRoom {
   id       String   @id @default(uuid())
   roomID   String
   userID   String
-  joinedAt DateTime @default(now())
   role     Role     @default(MEMBER)
-  Room     Room     @relation(fields: [roomID], references: [id])
-  User     User     @relation(fields: [userID], references: [id])
+  joinedAt DateTime @default(now())
+  room     Room     @relation(fields: [roomID], references: [id])
+  user     User     @relation(fields: [userID], references: [id])
 
   @@unique([roomID, userID])
 }
