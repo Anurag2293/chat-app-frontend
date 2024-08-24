@@ -10,32 +10,27 @@ export const POST = auth(async function POST(request) {
 			throw new Error("Not authorised!");
 		}
 		const body = await request.json();
-		const { userID, roomID, role } = body;
+		const { roomID, role } = body;
+		console.log({ body });
 
-    console.log({ body });
-
-    const checkUser = await prisma.user.findFirst({
-      where: {
-        id: userID
-      }
-    });
-
-    if (!checkUser) {
-      throw new Error("User not found");
-    }
-
-    console.log({checkUser});
+		const checkUser = await prisma.user.findFirst({
+			where: {
+				id: request.auth.user?.id
+			}
+		});
+		console.log({ checkUser });
+		if (!checkUser) {
+			throw new Error("User not found");
+		}
 
 		const newRole: Role = role ? role : "MEMBER";
-
 		const newUserRoom = await prisma.userRoom.create({
 			data: {
-				userID,
+				userID: checkUser.id,
 				roomID,
 				role: newRole
 			}
 		});
-
 		console.log({ newUserRoom });
 
 		return NextResponse.json(
@@ -49,7 +44,7 @@ export const POST = auth(async function POST(request) {
 			},
 		);
 	} catch (error) {
-		console.log("Error creating user room", error);
+		console.error("Error creating user room: ", error);
 		return NextResponse.json(
 			{
 				success: false,

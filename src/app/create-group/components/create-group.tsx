@@ -37,11 +37,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import UploadIcon from "@/components/icons/upload";
-import { patchRoomWithProfileImage, postRoom } from "@/api/room";
 import { useToast } from "@/components/ui/use-toast";
 
-import { ProfileImageUploader } from "./upload-profile";
+import { patchRoomWithProfileImage, postRoom } from "@/api/room";
 import { postUserRoom } from "@/api/user-room";
+
+import { ProfileImageUploader } from "./upload-profile";
 
 const createRoomformSchema = z.object({
   name: z.string().min(1, {
@@ -67,7 +68,7 @@ export default function CreateGroupComponent(props: CreateGroupProps) {
     },
   });
 
-  console.log({props});
+  console.log({ props });
 
   const { mutate, isPending } = useMutation({
     mutationFn: postRoom,
@@ -86,9 +87,8 @@ export default function CreateGroupComponent(props: CreateGroupProps) {
 
         // TODO: Update User Room with owner/creator of the room
         await postUserRoom({
-            userID: props.user.id || "",
-            roomID: result.data.id,
-            role: "OWNER"
+          roomID: result.data.id,
+          role: "OWNER"
         });
 
         // TODO: Route to the particular chat room
@@ -170,7 +170,7 @@ export default function CreateGroupComponent(props: CreateGroupProps) {
             </CardContent>
 
             <CardFooter className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => {}}>
+              <Button variant="outline" onClick={() => { }}>
                 Cancel
               </Button>
               <Button type="submit">
