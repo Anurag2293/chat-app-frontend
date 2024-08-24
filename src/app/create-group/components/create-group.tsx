@@ -41,6 +41,7 @@ import { patchRoomWithProfileImage, postRoom } from "@/api/room";
 import { useToast } from "@/components/ui/use-toast";
 
 import { ProfileImageUploader } from "./upload-profile";
+import { postUserRoom } from "@/api/user-room";
 
 const createRoomformSchema = z.object({
   name: z.string().min(1, {
@@ -66,13 +67,11 @@ export default function CreateGroupComponent(props: CreateGroupProps) {
     },
   });
 
+  console.log({props});
+
   const { mutate, isPending } = useMutation({
     mutationFn: postRoom,
-    onSuccess: async (result: {
-      success: boolean;
-      message: string;
-      data: Room;
-    }) => {
+    onSuccess: async (result) => {
       try {
         console.log({ result });
         if (!result.success) {
@@ -83,6 +82,13 @@ export default function CreateGroupComponent(props: CreateGroupProps) {
         await patchRoomWithProfileImage({
           roomID: result.data.id,
           profileImageURL,
+        });
+
+        // TODO: Update User Room with owner/creator of the room
+        await postUserRoom({
+            userID: props.user.id || "",
+            roomID: result.data.id,
+            role: "OWNER"
         });
 
         // TODO: Route to the particular chat room

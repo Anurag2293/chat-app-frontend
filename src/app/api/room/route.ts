@@ -35,6 +35,7 @@ export const POST = auth(async function POST(request) {
       },
     );
   } catch (e) {
+    console.log("Error creating Room", e);
     return NextResponse.json(
       {
         success: false,
@@ -78,6 +79,7 @@ export const PATCH = auth(async function PATCH(request) {
       },
     );
   } catch (e) {
+    console.log("Error updating Room with profile Image", e);
     return NextResponse.json(
       {
         success: false,
