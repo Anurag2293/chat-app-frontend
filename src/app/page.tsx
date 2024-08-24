@@ -43,6 +43,7 @@ export default function Home() {
                 src="/image3.jpeg"
                 width={550}
                 height={400}
+                priority
                 alt="Chatter App"
                 className="mx-auto overflow-hidden rounded-xl object-cover sm:w-full lg:w-3/4"
               />
