@@ -2,10 +2,51 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { auth } from "@/auth";
 
-export const GET = async (request: Request) => {
-  const data = await prisma.room.findMany();
-  NextResponse.json({ data });
-};
+export const GET = auth(async function GET(request) {
+  try {
+    if (!request.auth) {
+      throw new Error("Not authenticated");
+    }
+
+    const user = await prisma.user.findFirst({
+      where: {
+        id: request.auth.user?.id
+      },
+      include: {
+        groups: {
+          include: {
+            room: true
+          }
+        }
+      }
+    });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    console.log({groups: user.groups});
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "User groups fetched successfully!",
+        data: user.groups
+      }
+    )
+  } catch (e) {
+    console.log("Error getting Room", e);
+    return NextResponse.json(
+      {
+        success: false,
+        message: (e as Error).message,
+        data: null,
+      },
+      {
+        status: 401,
+      },
+    );
+  }
+})
 
 export const POST = auth(async function POST(request) {
   try {

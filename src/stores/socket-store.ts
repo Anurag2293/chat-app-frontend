@@ -4,9 +4,7 @@ import { io } from "socket.io-client";
 import { useRouter } from "next/navigation";
 
 import { ChatType } from "@/types/socketTypes";
-
 import { useToast } from "@/components/ui/use-toast";
-import { ToastAction } from "@/components/ui/toast";
 
 export type SocketState = {
   socket: Socket | null;
@@ -51,7 +49,6 @@ export const createSocketStore = (
       return toast({
         variant: "destructive",
         description: "Disconnected from server.",
-        // action: <ToastAction altText="Try again">{"Try again"}</ToastAction>
       });
     });
 
@@ -90,7 +87,7 @@ export const createSocketStore = (
             // action: <ToastAction altText="Try again">Try again</ToastAction>,
           });
         }
-        socket.emit("join", roomID, (error: string) => {
+        socket.emit("join-room", roomID, (error: string) => {
           if (error) {
             return toast({
               variant: "destructive",
@@ -98,7 +95,7 @@ export const createSocketStore = (
               description: error,
             });
           }
-          router.push(`/chat/${roomID}`);
+          // router.push(`/chat/${roomID}`);
           socket.emit("joined-room", roomID);
           toast({
             description: "Joined room successfully!",
