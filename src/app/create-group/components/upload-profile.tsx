@@ -17,7 +17,6 @@ type ProfileImageProps = {
 };
 
 export function ProfileImageUploader(props: ProfileImageProps) {
-  const [profileImage, setProfileImage] = useState<File>();
   const { toast } = useToast();
 
   const { startUpload, permittedFileInfo, isUploading } = useUploadThing(
@@ -49,7 +48,6 @@ export function ProfileImageUploader(props: ProfileImageProps) {
     (acceptedFiles: File[]) => {
       console.log(acceptedFiles);
       startUpload(acceptedFiles);
-      setProfileImage(acceptedFiles[0]);
     },
     [startUpload],
   );

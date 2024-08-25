@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Room } from "@prisma/client";
 import { User } from "next-auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -68,8 +67,6 @@ export default function CreateGroupComponent(props: CreateGroupProps) {
     },
   });
 
-  console.log({ props });
-
   const { mutate, isPending } = useMutation({
     mutationFn: postRoom,
     onSuccess: async (result) => {
@@ -79,19 +76,19 @@ export default function CreateGroupComponent(props: CreateGroupProps) {
           throw new Error(result.message);
         }
 
-        // TODO: Update Room with profile image
+        // Update Room with profile image
         await patchRoomWithProfileImage({
           roomID: result.data.id,
           profileImageURL,
         });
 
-        // TODO: Update User Room with owner/creator of the room
+        // Update User Room with owner/creator of the room
         await postUserRoom({
           roomID: result.data.id,
           role: "OWNER"
         });
 
-        // TODO: Route to the particular chat room
+        // Route to the particular chat room
         router.push(`/chat/${result.data.id}`);
 
         toast({
@@ -104,8 +101,7 @@ export default function CreateGroupComponent(props: CreateGroupProps) {
         });
       }
     },
-    onError: (error) => {
-      console.log({ error });
+    onError: () => {
       toast({
         title: "Error creating room!",
         variant: "destructive",
@@ -114,7 +110,6 @@ export default function CreateGroupComponent(props: CreateGroupProps) {
   });
 
   function onSubmit(values: z.infer<typeof createRoomformSchema>) {
-    console.log(values);
     mutate(values);
   }
 
