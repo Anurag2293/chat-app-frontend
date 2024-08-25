@@ -27,13 +27,16 @@ model Room {
 }
 
 model Message {
-  id      String   @id @default(uuid())
-  userID  String
-  roomID  String
-  content String
-  sentAt  DateTime @default(now())
-  room    Room     @relation(fields: [roomID], references: [id])
-  user    User     @relation(fields: [userID], references: [id])
+  id         String     @id @default(uuid())
+  userID     String
+  roomID     String
+  content    String
+  image      String?
+  senderType SenderType
+  sentAt     DateTime   @default(now())
+
+  room Room @relation(fields: [roomID], references: [id])
+  user User @relation(fields: [userID], references: [id])
 }
 
 model UserRoom {
@@ -52,4 +55,11 @@ enum Role {
   OWNER
   ADMIN
   MEMBER
+}
+
+enum SenderType {
+  USER
+  BOT
+  SYSTEM
+  GROUP
 }
