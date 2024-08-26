@@ -31,10 +31,10 @@ export default function JoinRoom() {
       room: "",
     },
   });
-  const { joinSocketRoom } = useSocketStore((state) => state);
+  const { socket } = useSocketStore((state) => state);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    joinSocketRoom(values.room);
+    // joinSocketRoom(values.room);
   }
 
   return (
