@@ -1,8 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import Navbar from "@/app/components/navbar";
-import JoinRoom from "@/app/components/join-room";
+import Navbar from "./__components/navbar";
 
 export default function Home() {
   return (
