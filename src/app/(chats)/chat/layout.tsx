@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PlusIcon from "@/components/icons/plus";
 
-import UserContacts from "./components/user-contacts";
+import UserContacts from "./__components/user-contacts";
 
 export const metadata: Metadata = {
   title: "Chat App - Room",

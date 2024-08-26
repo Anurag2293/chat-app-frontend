@@ -5,7 +5,7 @@ import { auth } from "@/auth";
 import { ReactQueryProvider } from "./react-query-provider"
 import { ThemeProvider } from "./theme-provider";
 import { SocketStoreProvider } from "./socket-store-provider";
-import { SocketAuth } from "@/app/__components/socket-auth";
+import { SocketAuth } from "@/components/socket-auth";
 
 export default async function Providers({ children }: { children: React.ReactNode }) {
 	const session = await auth();
