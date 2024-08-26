@@ -23,9 +23,9 @@ export default function ChatLayout({
         <div className="bg-muted/20 p-3 border-r hidden md:block">
           <div className="flex items-center justify-between space-x-4">
             <Link href="/">
-              <div className="font-medium text-sm">Chats</div>
+              <div className="font-bold text-2xl">Chats</div>
             </Link>
-            <Link href="/create-group">
+            <Link href="/new-chat">
               <Button variant="ghost" size="icon" className="rounded-full w-8 h-8">
                 <PlusIcon className="h-4 w-4" />
                 <span className="sr-only">New chat</span>
@@ -34,7 +34,7 @@ export default function ChatLayout({
           </div>
           <div className="py-4">
             <form>
-              <Input placeholder="Search" className="h-8" />
+              <Input placeholder="Search" className="h-8 py-4" />
             </form>
           </div>
           <div className="grid gap-2">

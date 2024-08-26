@@ -57,6 +57,7 @@ model RoomLink {
   roomID     String   @unique
   expiresAt  DateTime
   usageCount Int
+  joinLink   String   @unique
 
   room Room @relation(fields: [roomID], references: [id])
 }
