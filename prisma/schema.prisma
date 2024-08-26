@@ -24,6 +24,7 @@ model Room {
   profileImage String?
   users        UserRoom[]
   messages     Message[]
+  RoomLink     RoomLink?
 }
 
 model Message {
@@ -49,6 +50,15 @@ model UserRoom {
   user     User     @relation(fields: [userID], references: [id])
 
   @@unique([roomID, userID])
+}
+
+model RoomLink {
+  id         String   @id @default(uuid())
+  roomID     String   @unique
+  expiresAt  DateTime
+  usageCount Int
+
+  room Room @relation(fields: [roomID], references: [id])
 }
 
 enum Role {
