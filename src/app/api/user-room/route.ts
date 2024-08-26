@@ -13,9 +13,11 @@ export const POST = auth(async function POST(request) {
 		const { roomID, role } = body;
 		console.log({ body });
 
+		console.log({postUserRoomAuth: request.auth});
+
 		const checkUser = await prisma.user.findFirst({
 			where: {
-				id: request.auth.user?.id
+				email: request.auth.user?.email ?? "12345"
 			}
 		});
 		console.log({ checkUser });

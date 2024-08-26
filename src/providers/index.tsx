@@ -1,23 +1,15 @@
 
-import { ReactQueryProvider } from "./react-query-provider"
-import SessionProvider from './session-provider';
-import { ThemeProvider } from "./theme-provider";
-
-import { SocketStoreProvider } from "./socket-store-provider";
-
 import { Toaster } from "@/components/ui/toaster";
 import { auth } from "@/auth";
-import type { Session } from "next-auth";
+
+import { ReactQueryProvider } from "./react-query-provider"
+import { ThemeProvider } from "./theme-provider";
+import { SocketStoreProvider } from "./socket-store-provider";
+import { SocketAuth } from "@/app/components/socket-auth";
 
 export default async function Providers({ children }: { children: React.ReactNode }) {
 	const session = await auth();
-
-	console.log({ session });
-
-	const DefaultSession: Session = {
-		expires: ""
-	}
-
+	
 	if (!session) {
 		return <>
 			<ThemeProvider
@@ -47,6 +39,7 @@ export default async function Providers({ children }: { children: React.ReactNod
 				</ReactQueryProvider>
 			</ThemeProvider>
 			<Toaster />
+			<SocketAuth session={session} />
 		</SocketStoreProvider>
 	);
 }
