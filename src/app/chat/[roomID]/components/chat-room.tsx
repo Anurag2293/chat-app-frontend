@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useParams } from "next/navigation";
 
 import { z } from "zod";
@@ -54,15 +53,10 @@ export default function ChatRoom() {
     },
   });
 
-  const { socket, messages, sendMessageToRoom, joinSocketRoom } =
-    useSocketStore((s) => s);
-
-  useEffect(() => {
-    joinSocketRoom(String(roomID));
-  }, [roomID, joinSocketRoom]);
+  const { socket } = useSocketStore((s) => s);
 
   const onSubmit = (values: z.infer<typeof chatFormSchema>) => {
-    sendMessageToRoom(String(roomID), values.chatMessage);
+    // sendMessageToRoom(String(roomID), values.chatMessage);
     form.setValue("chatMessage", "", {
       shouldValidate: true,
       shouldDirty: true,
@@ -78,7 +72,7 @@ export default function ChatRoom() {
             <AvatarFallback>OM</AvatarFallback>
           </Avatar>
           <div className="grid gap-0.5">
-            <p className="text-sm font-medium leading-none">{roomID}</p>
+            <p className="text-sm font-medium leading-none">{roomID} : {socket?.id}</p>
             <p className="text-xs text-muted-foreground">Active 2h ago</p>
           </div>
         </div>
@@ -94,7 +88,7 @@ export default function ChatRoom() {
         </div>
       </div>
       <div className="grid gap-4 p-3">
-        {messages.map((chat, index) => {
+        {/* {messages.map((chat, index) => {
           if (chat.senderID === socket?.id) {
             return (
               <SelfChat key={index}>
@@ -107,7 +101,7 @@ export default function ChatRoom() {
               {chat.senderID}: {chat.text}
             </OtherChat>
           );
-        })}
+        })} */}
       </div>
       <div className="border-t absolute bottom-0 w-full">
         <Form {...form}>

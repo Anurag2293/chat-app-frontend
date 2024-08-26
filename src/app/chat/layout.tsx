@@ -22,7 +22,9 @@ export default function ChatLayout({
       <div className="grid grid-cols-3 md:grid-cols-4 w-full overflow-hidden">
         <div className="bg-muted/20 p-3 border-r hidden md:block">
           <div className="flex items-center justify-between space-x-4">
-            <div className="font-medium text-sm">Chats</div>
+            <Link href="/">
+              <div className="font-medium text-sm">Chats</div>
+            </Link>
             <Link href="/create-group">
               <Button variant="ghost" size="icon" className="rounded-full w-8 h-8">
                 <PlusIcon className="h-4 w-4" />
