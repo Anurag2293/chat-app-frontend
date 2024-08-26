@@ -4,16 +4,7 @@ import Google from "next-auth/providers/google";
 import prisma from "@/lib/db";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-	providers: [
-		Google({
-			clientId: process.env.AUTH_GOOGLE_ID,
-			clientSecret: process.env.AUTH_GOOGLE_SECRET,
-			async profile(profile) {
-				console.log({ profile });
-				return { ...profile };
-			}
-		})
-	],
+	providers: [Google],
 	callbacks: {
 		async signIn(params) {
 			const accountExists = await prisma.user.findFirst({

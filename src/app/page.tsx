@@ -6,9 +6,9 @@ import JoinRoom from "@/app/components/join-room";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-[100dvh]">
+    <div className="flex flex-col h-screen max-h-screen">
       <Navbar />
-      <main className="flex-1">
+      <main className="">
         <section className="bg-primary dark:bg-black dark:text-white py-12 md:py-24 lg:py-28">
           <div className="container grid items-end gap-6 px-4 md:px-6 lg:grid-cols-2 lg:gap-10">
             <div className="space-y-4">
@@ -51,8 +51,6 @@ export default function Home() {
           </div>
         </section>
       </main>
-
-      {/* <JoinRoom /> */}
     </div>
   );
 }

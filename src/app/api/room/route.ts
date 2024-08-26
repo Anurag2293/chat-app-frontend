@@ -10,7 +10,7 @@ export const GET = auth(async function GET(request) {
 
     const user = await prisma.user.findFirst({
       where: {
-        id: request.auth.user?.id
+        email: request.auth.user?.email || "12345"
       },
       include: {
         groups: {
