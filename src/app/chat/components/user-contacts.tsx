@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getUserRooms } from "@/api/room";
+import { GetAvatarFallback } from "@/lib/chat-room";
 
 export default function UserContacts() {
 	const { roomID } = useParams();
@@ -37,7 +38,7 @@ export default function UserContacts() {
 		>
 			<Avatar className="border w-10 h-10">
 				<AvatarImage src={contact.room.profileImage ?? ''} alt="Image" />
-				<AvatarFallback>{contact.room.name.toUpperCase().substring(0, 2)}</AvatarFallback>
+				<AvatarFallback>{GetAvatarFallback(contact.room.name)}</AvatarFallback>
 			</Avatar>
 			<div className="grid gap-0.5">
 				<p className="text-sm font-medium leading-none">

@@ -1,27 +1,21 @@
 "use client";
 
-import { useParams } from "next/navigation";
-
+import { useParams, useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { getUserRooms } from "@/api/room";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import PhoneIcon from "@/components/icons/phone";
 import SendIcon from "@/components/icons/send";
 import VideoIcon from "@/components/icons/video";
-
-import { useSocketStore } from "@/providers/socket-store-provider";
+import { useToast } from "@/components/ui/use-toast";
+import { GetAvatarFallback, ShortenRoomDescription } from "@/lib/chat-room";
 
 const SelfChat = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -45,6 +39,14 @@ const chatFormSchema = z.object({
 
 export default function ChatRoom() {
   const { roomID } = useParams();
+  const router = useRouter();
+  const { toast } = useToast();
+  const { data, isLoading, isError } = useQuery({
+		queryFn: getUserRooms,
+		queryKey: ['fetchUserContact'],
+	});
+
+  const roomDetails = data?.data.filter((value) => value.roomID === roomID)[0].room;
 
   const form = useForm<z.infer<typeof chatFormSchema>>({
     resolver: zodResolver(chatFormSchema),
@@ -52,8 +54,6 @@ export default function ChatRoom() {
       chatMessage: "",
     },
   });
-
-  const { socket } = useSocketStore((s) => s);
 
   const onSubmit = (values: z.infer<typeof chatFormSchema>) => {
     // sendMessageToRoom(String(roomID), values.chatMessage);
@@ -63,17 +63,27 @@ export default function ChatRoom() {
     });
   };
 
+  if (isError || (!isLoading && !roomDetails)) {
+    toast({
+      description: "Error fetching room data",
+      variant: "destructive"
+    })
+    router.push("/chat");
+
+    return <></>
+  }
+
   return (
     <div className="relative min-h-full max-h-full h-full">
       <div className="p-3 flex border-b items-center">
         <div className="flex items-center gap-2">
           <Avatar className="border w-10 h-10">
-            <AvatarImage src="/image3.jpg" alt="Image" />
-            <AvatarFallback>OM</AvatarFallback>
+            <AvatarImage src={roomDetails?.profileImage ?? ""} alt="Image" />
+            <AvatarFallback>{GetAvatarFallback(roomDetails?.name ?? "")}</AvatarFallback>
           </Avatar>
           <div className="grid gap-0.5">
-            <p className="text-sm font-medium leading-none">{roomID} : {socket?.id}</p>
-            <p className="text-xs text-muted-foreground">Active 2h ago</p>
+            <p className="text-sm font-medium leading-none">{roomDetails?.name}</p>
+            <p className="text-xs text-muted-foreground">{ShortenRoomDescription(roomDetails?.description ?? "")}</p>
           </div>
         </div>
         <div className="flex items-center gap-1 ml-auto">
