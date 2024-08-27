@@ -9,7 +9,7 @@ import { SocketAuth } from "@/components/socket-auth";
 
 export default async function Providers({ children }: { children: React.ReactNode }) {
 	const session = await auth();
-	
+
 	if (!session) {
 		return <>
 			<ThemeProvider
@@ -27,19 +27,21 @@ export default async function Providers({ children }: { children: React.ReactNod
 	}
 
 	return (
-		<SocketStoreProvider>
-			<ThemeProvider
-				attribute="class"
-				defaultTheme="dark"
-				enableSystem
-				disableTransitionOnChange
-			>
-				<ReactQueryProvider>
-					{children}
-				</ReactQueryProvider>
-			</ThemeProvider>
-			<Toaster />
-			<SocketAuth session={session} />
-		</SocketStoreProvider>
+		<>
+			{/* <SocketStoreProvider> */}
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="dark"
+					enableSystem
+					disableTransitionOnChange
+				>
+					<ReactQueryProvider>
+						{children}
+					</ReactQueryProvider>
+				</ThemeProvider>
+				<Toaster />
+				{/* <SocketAuth session={session} /> */}
+			{/* </SocketStoreProvider> */}
+		</>
 	);
 }

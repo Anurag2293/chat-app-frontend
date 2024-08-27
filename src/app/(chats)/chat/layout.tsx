@@ -19,7 +19,7 @@ export default function ChatLayout({
 }>) {
   return (
     <main>
-      <div className="grid grid-cols-3 md:grid-cols-4 w-full overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-3 w-full overflow-hidden">
         <div className="bg-muted/20 p-3 border-r hidden md:block">
           <div className="flex items-center justify-between space-x-4">
             <Link href="/">
@@ -41,7 +41,7 @@ export default function ChatLayout({
             <UserContacts />
           </div>
         </div>
-        <div className="min-h-screen col-span-3 flex flex-col justify-between">
+        <div className="min-h-screen col-span-1 md:col-span-2">
           {children}
         </div>
       </div>
