@@ -2,7 +2,43 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { auth } from "@/auth";
 
-import { Role } from "@prisma/client"
+import { Role } from "@prisma/client";
+
+export const GET = auth(async function GET(request) {
+	try {
+		if (!request.auth) {
+			throw new Error("Not authorised!");
+		}
+
+		const searchParams = request.nextUrl.searchParams;
+		const roomID = searchParams.get("roomID");
+		if (!roomID) {
+			throw new Error("Invalid roomID");
+		}
+
+		const usersInRoom = await prisma.userRoom.findMany({
+			where: {
+				roomID
+			},
+			include: {
+				user: true
+			}
+		})
+
+	} catch (e) {
+		console.log("Error getting Room Details", e);
+    return NextResponse.json(
+      {
+        success: false,
+        message: (e as Error).message,
+        data: null,
+      },
+      {
+        status: 401,
+      },
+    );
+	}
+})
 
 export const POST = auth(async function POST(request) {
 	try {
@@ -13,7 +49,7 @@ export const POST = auth(async function POST(request) {
 		const { roomID, role } = body;
 		console.log({ body });
 
-		console.log({postUserRoomAuth: request.auth});
+		console.log({ postUserRoomAuth: request.auth });
 
 		const checkUser = await prisma.user.findFirst({
 			where: {

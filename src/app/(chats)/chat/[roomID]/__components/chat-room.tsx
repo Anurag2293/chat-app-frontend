@@ -36,7 +36,7 @@ const chatFormSchema = z.object({
 
 type ChatRoomProps = {
   toggleShowRoomDetails: () => void,
-  roomDetails: Room | undefined
+  roomDetails: Room
 }
 
 export default function ChatRoom(props: ChatRoomProps) {
@@ -60,12 +60,12 @@ export default function ChatRoom(props: ChatRoomProps) {
       <div className="p-3 flex border-b items-center">
         <div className="flex flex-grow items-center gap-2 cursor-pointer" onClick={props.toggleShowRoomDetails}>
           <Avatar className="border w-10 h-10">
-            <AvatarImage src={props.roomDetails?.profileImage ?? ""} alt="Image" />
-            <AvatarFallback>{GetAvatarFallback(props.roomDetails?.name ?? "")}</AvatarFallback>
+            <AvatarImage src={props.roomDetails.profileImage ?? ""} alt="Profile" />
+            <AvatarFallback>{GetAvatarFallback(props.roomDetails.name ?? "")}</AvatarFallback>
           </Avatar>
           <div className="grid gap-0.5">
-            <p className="text-sm font-medium leading-none">{props.roomDetails?.name}</p>
-            <p className="text-xs text-muted-foreground">{ShortenRoomDescription(props.roomDetails?.description ?? "")}</p>
+            <p className="text-sm font-medium leading-none">{props.roomDetails.name}</p>
+            <p className="text-xs text-muted-foreground">{ShortenRoomDescription(props.roomDetails.description ?? "")}</p>
           </div>
         </div>
         <div className="flex items-center gap-1">

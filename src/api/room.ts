@@ -2,15 +2,15 @@
 import type { Room, UserRoom } from "@prisma/client";
 import type { ResultType } from "@/types/api";
 
-type RoomsWithInfo = {
+type RoomWithInfo = {
 	room: Room
 } & UserRoom;
 
-export async function getUserRooms(): Promise<ResultType<RoomsWithInfo[]>> {
+export async function getUserRooms(): Promise<ResultType<RoomWithInfo[]>> {
 	const response = await fetch("/api/room", {
 		method: "GET"
 	});
-	const result: ResultType<RoomsWithInfo[]> = await response.json();
+	const result: ResultType<RoomWithInfo[]> = await response.json();
 	if (!result.success) {
 		throw new Error(result.message);
 	}

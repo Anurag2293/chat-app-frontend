@@ -1,5 +1,6 @@
 import React from "react"
 import { User, X, Search, LogOut, UserPlus, Link2 } from "lucide-react";
+import type { Room } from "@prisma/client";
 
 import {
   Card,
@@ -16,10 +17,11 @@ import {
 } from "@/components/ui/avatar";
 
 type RoomDetailsProps = {
-  setShowRoomDetails: React.Dispatch<React.SetStateAction<boolean>>
+  setShowRoomDetails: React.Dispatch<React.SetStateAction<boolean>>,
+  roomDetails: Room
 }
 
-export function RoomDetails(props: RoomDetailsProps) {
+export default function RoomDetails(props: RoomDetailsProps) {
   return (
     <Card className="relative col-span-1 rounded-none h-screen overflow-y-auto">
       <div className="w-full sticky top-0 z-10 py-6 px-8 flex gap-4 bg-muted/20">
@@ -31,19 +33,19 @@ export function RoomDetails(props: RoomDetailsProps) {
           <div className="w-40 h-40 bg-muted rounded-full flex items-center justify-center">
             <User className="h-16 w-16 text-muted-foreground" />
           </div>
-          <CardTitle className="mt-2 text-2xl font-semibold">Chat Room Title</CardTitle>
+          <CardTitle className="mt-2 text-2xl font-semibold">{props.roomDetails.name}</CardTitle>
           <p className="text-muted-foreground">Group {`\u00B7`} 29 members</p>
         </div>
       </CardHeader>
 
-      <CardDescription className="my-2 p-8 bg-muted/20">
-        <p className="text-base text-primary">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum rem hic minus adipisci, ullam voluptas porro error aliquid perspiciatis recusandae odit mollitia voluptates sed delectus iusto modi expedita natus dolore.
-        </p>
+      <CardContent className="my-2 p-8 bg-muted/20">
+        <CardDescription className="text-base text-primary">
+          {props.roomDetails.description}
+        </CardDescription>
         <p className="mt-4 text-muted-foreground">
-          Group created by Anurag Dhote, on 17/05/2024 at 3:54 pm
+          Group created by Anurag Dhote, on {`${props.roomDetails.createdAt}`} at 3:54 pm
         </p>
-      </CardDescription>
+      </CardContent>
 
       <CardContent className="my-2 p-0 bg-muted/20">
         <div className="mx-8 py-4 flex justify-between cursor-pointer ">
