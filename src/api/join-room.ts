@@ -12,3 +12,15 @@ export const getJoinRoom = async (joinLink: string): Promise<ResultType<UserRoom
     }
     return result;
 }
+
+export const postJoinRoomLink = async (roomID: string): Promise<ResultType<string>> => {
+    const response = await fetch("/api/join-room", {
+        method: 'POST',
+        body: JSON.stringify({roomID})
+    });
+    const result: ResultType<string> = await response.json();
+    if (!result.success) {
+        throw new Error(result.message);
+    }
+    return result;
+}

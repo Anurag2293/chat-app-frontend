@@ -5,40 +5,40 @@ import { auth } from "@/auth";
 import { generateLink, validateLink } from "@/lib/link-service";
 
 export const GET = auth(async function GET(request) {
-	try {
-		if (!request.auth) {
+  try {
+    if (!request.auth) {
       throw new Error("Not authenticated");
     }
 
-		const searchParams = request.nextUrl.searchParams;
-		const joinLink = searchParams.get('joinLink');
-		if (!joinLink) {
-			throw new Error('Invalid link.')
-		}
+    const searchParams = request.nextUrl.searchParams;
+    const joinLink = searchParams.get('joinLink');
+    if (!joinLink) {
+      throw new Error('Invalid link.')
+    }
 
-		const roomID = await validateLink(joinLink);
-		if (!roomID) {
-			throw new Error('Invalid or expired link.');
-		}
+    const roomID = await validateLink(joinLink);
+    if (!roomID) {
+      throw new Error('Invalid or expired link.');
+    }
 
-		// TODO: Extend session so that we don't need to fetch user here!
-		const user = await prisma.user.findFirst({
-			where: {
-				email: request.auth.user?.email ?? "12345"
-			}
-		});
-		if (!user) {
-			throw new Error('User not found!');
-		}
+    // TODO: Extend session so that we don't need to fetch user here!
+    const user = await prisma.user.findFirst({
+      where: {
+        email: request.auth.user?.email ?? "12345"
+      }
+    });
+    if (!user) {
+      throw new Error('User not found!');
+    }
 
-		const newUserRoom = await prisma.userRoom.create({
-			data: {
-				roomID,
-				userID: user.id
-			}
-		});
+    const newUserRoom = await prisma.userRoom.create({
+      data: {
+        roomID,
+        userID: user.id
+      }
+    });
 
-		return NextResponse.json(
+    return NextResponse.json(
       {
         success: true,
         message: "Joined Room successfully!",
@@ -48,8 +48,8 @@ export const GET = auth(async function GET(request) {
         status: 201,
       },
     );
-	} catch (e) {
-		console.log("Error getting Room", e);
+  } catch (e) {
+    console.log("Error getting Room", e);
     return NextResponse.json(
       {
         success: false,
@@ -60,20 +60,44 @@ export const GET = auth(async function GET(request) {
         status: 401,
       },
     );
-	}
+  }
 })
 
 export const POST = auth(async function POST(request) {
-	try {
-		if (!request.auth) {
+  try {
+    if (!request.auth) {
       throw new Error("Not authenticated!");
     }
-		const body = await request.json();
-		const { roomID } = body;
+    const body = await request.json();
+    const { roomID } = body;
 
-		const joinLink = await generateLink(roomID);
+    const verifyUserInRoom = await prisma.user.findFirst({
+      where: {
+        email: request.auth.user?.email ?? ""
+      },
+      include: {
+        groups: {
+          where: {
+            roomID
+          }
+        }
+      }
+    });
+    if (!verifyUserInRoom) {
+      throw new Error('No user exists!');
+    }
 
-		return NextResponse.json(
+    const isUserAuthorized = verifyUserInRoom.groups.filter(group =>
+      (group.roomID === roomID) &&
+      (['OWNER', 'ADMIN'].includes(group.role))
+    ).length > 0;
+    if (!isUserAuthorized) {
+      throw new Error('User unauthorized!');
+    }
+
+    const joinLink = await generateLink(roomID);
+
+    return NextResponse.json(
       {
         success: true,
         message: "Join Room Link created successfully!",
@@ -83,8 +107,8 @@ export const POST = auth(async function POST(request) {
         status: 201,
       },
     );
-	} catch (e) {
-		console.log("Error creating Room Link", e);
+  } catch (e) {
+    console.log("Error creating Room Link", e);
     return NextResponse.json(
       {
         success: false,
@@ -95,5 +119,5 @@ export const POST = auth(async function POST(request) {
         status: 401,
       },
     );
-	}
+  }
 })
