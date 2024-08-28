@@ -1,3 +1,4 @@
+
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
@@ -10,5 +11,5 @@ export default async function CreateGroup() {
     return redirect("/");
   }
 
-  return <CreateGroupComponent user={session.user} />;
+  return <CreateGroupComponent />;
 }

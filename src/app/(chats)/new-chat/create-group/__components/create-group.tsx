@@ -54,7 +54,7 @@ type CreateGroupProps = {
   user: User;
 };
 
-export default function CreateGroupComponent(props: CreateGroupProps) {
+export default function CreateGroupComponent() {
   const router = useRouter();
   const [profileImageURL, setProfileImageURL] = useState<string>("");
   const { toast } = useToast();
