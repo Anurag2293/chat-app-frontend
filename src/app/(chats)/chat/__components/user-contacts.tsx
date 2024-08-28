@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getUserRooms } from "@/api/room";
 import { GetAvatarFallback } from "@/lib/chat-room";
+
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function UserContacts() {
 	const { roomID } = useParams();
@@ -17,9 +19,19 @@ export default function UserContacts() {
 		queryKey: ['fetchUserContact']
 	});
 
-	if (isLoading) return <div>
-		Loading...
-	</div>
+	if (isLoading) {
+		return <div>
+			{Array(8).fill(0).map((_, idx) => (
+				<div key={idx} className="mb-4 flex items-center space-x-4">
+					<Skeleton className="h-12 w-12 rounded-full" />
+					<div className="space-y-2">
+						<Skeleton className="h-4 w-[250px]" />
+						<Skeleton className="h-4 w-[200px]" />
+					</div>
+				</div>
+			))}
+		</div>
+	}
 
 	if (isError || !data) return <div>
 		<Link href="/">

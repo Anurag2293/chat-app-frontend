@@ -2,11 +2,11 @@ import React, { useState } from "react"
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import type { Room } from "@prisma/client";
-import { User, X, Search, LogOut, UserPlus, Link2 } from "lucide-react";
+import { User, X, Search, LogOut, UserPlus, Link2, AlertCircle } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 import { getUserRoom } from "@/api/user-room";
-
-import { Skeleton } from "@/components/ui/skeleton"
+import { GetDateFromDateTime, GetTimeFromDateTime } from "@/lib/chat-room";
 
 import {
 	Card,
@@ -17,13 +17,18 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import {
+	Alert,
+	AlertDescription,
+	AlertTitle,
+} from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
 } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
-import { GetDateFromDateTime, GetTimeFromDateTime } from "@/lib/chat-room";
 import GroupInviteLink from "./invite-link";
 
 export type RoomDetailsOptions = 'HOME' | 'GROUP-INVITE';
@@ -34,12 +39,16 @@ type RoomDetailsProps = {
 }
 
 export default function RoomDetails(props: RoomDetailsProps) {
+	const session = useSession();
 	const [pageOption, setPageOption] = useState<RoomDetailsOptions>('HOME');
 
 	const { data: roomWithUsers, isLoading, isError } = useQuery({
 		queryFn: () => getUserRoom(props.roomDetails.id),
 		queryKey: ['getUsersInRoom']
 	});
+
+	const currentUser = roomWithUsers?.data.filter(userroom => userroom.user.email === session.data?.user?.email)[0];
+	const canUserInvite = ['OWNER', 'ADMIN'].includes(currentUser?.role ?? '');
 
 	const goBackToHome = () => {
 		setPageOption('HOME');
@@ -90,19 +99,19 @@ export default function RoomDetails(props: RoomDetailsProps) {
 					<Search className="text-muted-foreground" />
 				</div>
 
-				<div className="w-full px-8 py-4 flex items-center space-x-2 cursor-pointer hover:bg-muted/50">
+				{canUserInvite && <div className="w-full px-8 py-4 flex items-center space-x-2 cursor-pointer hover:bg-muted/50">
 					<div className="h-10 w-10 flex justify-center items-center bg-green-600 rounded-full">
 						<UserPlus />
 					</div>
 					<div>Add member</div>
-				</div>
+				</div>}
 
-				<div className="w-full px-8 py-4 flex items-center space-x-2 cursor-pointer hover:bg-muted/50" onClick={() => setPageOption('GROUP-INVITE')}>
+				{canUserInvite && <div className="w-full px-8 py-4 flex items-center space-x-2 cursor-pointer hover:bg-muted/50" onClick={() => setPageOption('GROUP-INVITE')}>
 					<div className="h-10 w-10 flex justify-center items-center bg-green-600 rounded-full">
 						<Link2 />
 					</div>
 					<div>Invite to group via link</div>
-				</div>
+				</div>}
 
 				<div className="flex flex-col items-start">
 					{
@@ -111,14 +120,20 @@ export default function RoomDetails(props: RoomDetailsProps) {
 								<div key={idx} className="w-full px-8 py-3 flex items-center space-x-4 my-2">
 									<Skeleton className="h-10 w-10 rounded-full" />
 									<div className="space-y-2">
-										<Skeleton className="h-4 w-4/5" />
-										<Skeleton className="h-4 w-3/5" />
+										<Skeleton className="h-4 w-[250px]" />
+										<Skeleton className="h-4 w-[200px]" />
 									</div>
 								</div>
 							))
 							:
 							isError ?
-								<div>Error fetching Contacts.</div>
+								<Alert variant="destructive">
+									<AlertCircle className="h-4 w-4" />
+									<AlertTitle>Error fetching Contacts.</AlertTitle>
+									<AlertDescription>
+										Please try again.
+									</AlertDescription>
+								</Alert>
 								:
 								roomWithUsers?.data.map((userroom) => (
 									<div key={userroom.user.id} className="w-full px-8 py-3 flex justify-between items-start cursor-pointer hover:bg-muted/50">

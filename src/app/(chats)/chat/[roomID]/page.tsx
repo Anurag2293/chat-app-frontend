@@ -5,7 +5,9 @@ import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
 import { getUserRooms } from "@/api/room";
+
 import { useToast } from "@/components/ui/use-toast";
+import { LoadingSpinner } from "@/components/loader";
 
 import ChatRoom from "./__components/chat-room";
 import RoomDetails from "./__components/room-details";
@@ -36,7 +38,9 @@ export default function ChatRoomWithID() {
 
   if (!roomDetails) {
     if (isLoading) {
-      return "Loading...";
+      return <div className="w-full h-full flex justify-center items-center">
+        <LoadingSpinner size={64} />
+      </div>
     }
     return (<></>);
   }
