@@ -1,9 +1,9 @@
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { Message } from "@prisma/client";
 import { io, type Socket } from "socket.io-client";
 import { createStore } from "zustand";
 
-import { useToast } from "@/components/ui/use-toast";
+// import { useToast } from "@/components/ui/use-toast";
 
 export type SocketState = {
   socket: Socket | null;
@@ -36,22 +36,22 @@ export const createSocketStore = (
       email: ""
     }
   });
-  const { toast } = useToast();
-  const router = useRouter();
+  // const { toast } = useToast();
+  // const router = useRouter();
 
   socket.on("connect", () => {
     console.log("Connected to server: ", socket.id);
-    return toast({
-      description: "Connected to server: " + socket.id,
-    });
+    // return toast({
+    //   description: "Connected to server: " + socket.id,
+    // });
   });
 
   socket.on("disconnect", () => {
     console.log("Disconnected to server: ", socket.id);
-    return toast({
-      variant: "destructive",
-      description: "Disconnected from server.",
-    });
+    // return toast({
+    //   variant: "destructive",
+    //   description: "Disconnected from server.",
+    // });
   });
 
   return createStore<SocketStore>()((set) => {

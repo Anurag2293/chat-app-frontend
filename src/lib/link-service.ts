@@ -1,11 +1,6 @@
-import Cryptr from "cryptr"
-import prisma from "./db";
+import { nanoid } from 'nanoid';
 
-const cryptr = new Cryptr(String(process.env.CRYPTR_SECRET_KEY), {
-    encoding: 'base64',
-    pbkdf2Iterations: 10000,
-    saltLength: 10
-});
+import prisma from "./db";
 
 export const generateLink = async (roomID: string) => {
     const link = await prisma.roomLink.findFirst({
@@ -17,7 +12,7 @@ export const generateLink = async (roomID: string) => {
         return link.joinLink;
     }
 
-    const newJoinLink = cryptr.encrypt(roomID);
+    const newJoinLink = nanoid();
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + (5 * 24));
 
@@ -41,11 +36,6 @@ export const validateLink = async (joinLink: string) => {
     });
     
     if (!link || link.expiresAt < new Date()) {
-        return null;
-    }
-    
-    const decryptedCode = cryptr.decrypt(joinLink);
-    if (!decryptedCode) {
         return null;
     }
     
