@@ -23,20 +23,30 @@ export const GET = auth(async function GET(request) {
 			include: {
 				user: true
 			}
-		})
+		});
 
+		return NextResponse.json(
+			{
+				success: true,
+				message: "Fetched room details",
+				data: usersInRoom
+			},
+			{
+				status: 200
+			},
+		);
 	} catch (e) {
 		console.log("Error getting Room Details", e);
-    return NextResponse.json(
-      {
-        success: false,
-        message: (e as Error).message,
-        data: null,
-      },
-      {
-        status: 401,
-      },
-    );
+		return NextResponse.json(
+			{
+				success: false,
+				message: (e as Error).message,
+				data: null,
+			},
+			{
+				status: 401,
+			},
+		);
 	}
 })
 
