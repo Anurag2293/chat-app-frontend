@@ -5,11 +5,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
 import { getUserRooms } from "@/api/room";
-import { GetAvatarFallback } from "@/lib/chat-room";
+import { getAvatarFallback } from "@/lib/chat-room";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UserContacts() {
 	const { roomID } = useParams();
@@ -50,7 +50,7 @@ export default function UserContacts() {
 		>
 			<Avatar className="border w-10 h-10">
 				<AvatarImage src={contact.room.profileImage ?? ''} alt="Image" />
-				<AvatarFallback>{GetAvatarFallback(contact.room.name)}</AvatarFallback>
+				<AvatarFallback>{getAvatarFallback(contact.room.name)}</AvatarFallback>
 			</Avatar>
 			<div className="grid gap-0.5">
 				<p className="text-sm font-medium leading-none">

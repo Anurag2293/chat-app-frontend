@@ -6,7 +6,7 @@ import { User, X, Search, LogOut, UserPlus, Link2, AlertCircle } from "lucide-re
 import { useSession } from "next-auth/react";
 
 import { getUserRoom } from "@/api/user-room";
-import { GetDateFromDateTime, GetTimeFromDateTime } from "@/lib/chat-room";
+import { getDateFromDateTime, getTimeFromDateTime } from "@/lib/chat-room";
 
 import {
 	Card,
@@ -47,6 +47,7 @@ export default function RoomDetails(props: RoomDetailsProps) {
 		queryKey: ['getUsersInRoom']
 	});
 
+	
 	const currentUser = roomWithUsers?.data.filter(userroom => userroom.user.email === session.data?.user?.email)[0];
 	const canUserInvite = ['OWNER', 'ADMIN'].includes(currentUser?.role ?? '');
 
@@ -64,6 +65,7 @@ export default function RoomDetails(props: RoomDetailsProps) {
 				<X onClick={() => props.setShowRoomDetails(false)} className='cursor-pointer' />
 				<h2 className="font-semibold">Group Info</h2>
 			</div>
+
 			<CardHeader className="bg-muted/20 py-6">
 				<div className="flex flex-col items-center">
 					<div className="w-40 h-40 bg-muted rounded-full flex items-center justify-center">
@@ -80,7 +82,10 @@ export default function RoomDetails(props: RoomDetailsProps) {
 						}
 					</div>
 					<CardTitle className="mt-2 text-2xl font-semibold">{props.roomDetails.name}</CardTitle>
-					<p className="text-muted-foreground">Group {`\u00B7`} {roomWithUsers?.data.length} members</p>
+					<p className="text-muted-foreground">
+						Group
+						{roomWithUsers?.data.length && ` \u00B7 ${roomWithUsers?.data.length} members`}
+					</p>
 				</div>
 			</CardHeader>
 
@@ -89,13 +94,15 @@ export default function RoomDetails(props: RoomDetailsProps) {
 					{props.roomDetails.description}
 				</CardDescription>
 				<p className="mt-4 text-muted-foreground">
-					Group created by Anurag Dhote, on {GetDateFromDateTime(props.roomDetails.createdAt)} at {GetTimeFromDateTime(props.roomDetails.createdAt)}
+					Group created by Anurag Dhote, on {getDateFromDateTime(props.roomDetails.createdAt)} at {getTimeFromDateTime(props.roomDetails.createdAt)}
 				</p>
 			</CardContent>
 
 			<CardContent className="my-2 p-0 bg-muted/20">
 				<div className="mx-8 py-4 flex justify-between cursor-pointer ">
-					<h4 className="font-medium text-muted-foreground">{roomWithUsers?.data.length} members</h4>
+					<h4 className="font-medium text-muted-foreground">
+						{roomWithUsers?.data.length && `${roomWithUsers?.data.length} members`}
+					</h4>
 					<Search className="text-muted-foreground" />
 				</div>
 
@@ -114,47 +121,49 @@ export default function RoomDetails(props: RoomDetailsProps) {
 				</div>}
 
 				<div className="flex flex-col items-start">
-					{
-						isLoading ?
-							Array(3).fill(0).map((_, idx) => (
-								<div key={idx} className="w-full px-8 py-3 flex items-center space-x-4 my-2">
-									<Skeleton className="h-10 w-10 rounded-full" />
-									<div className="space-y-2">
-										<Skeleton className="h-4 w-[250px]" />
-										<Skeleton className="h-4 w-[200px]" />
+					{isLoading && Array(3).fill(0).map((_, idx) => (
+						<div key={idx} className="w-full px-8 py-3 flex items-center space-x-4 my-2">
+							<Skeleton className="h-10 w-10 rounded-full" />
+							<div className="space-y-2">
+								<Skeleton className="h-4 w-[250px]" />
+								<Skeleton className="h-4 w-[200px]" />
+							</div>
+						</div>
+					))}
+
+					{!isLoading && isError &&
+						<div className="w-full my-8 px-6">
+							<Alert variant="destructive">
+								<AlertCircle className="h-4 w-4" />
+								<AlertTitle>Error fetching Contacts.</AlertTitle>
+								<AlertDescription>
+									Please try again.
+								</AlertDescription>
+							</Alert>
+						</div>
+					}
+
+					{!isLoading && !isError && roomWithUsers &&
+						roomWithUsers?.data.map((userroom) => (
+							<div key={userroom.user.id} className="w-full px-8 py-3 flex justify-between items-start cursor-pointer hover:bg-muted/50">
+								<div className="flex items-start gap-2">
+									<Avatar>
+										<AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+										<AvatarFallback>CN</AvatarFallback>
+									</Avatar>
+									<div>
+										<p className="text-base">{userroom.user.name}</p>
+										<p className="text-muted-foreground text-sm">{userroom.user.email}</p>
 									</div>
 								</div>
-							))
-							:
-							isError ?
-								<Alert variant="destructive">
-									<AlertCircle className="h-4 w-4" />
-									<AlertTitle>Error fetching Contacts.</AlertTitle>
-									<AlertDescription>
-										Please try again.
-									</AlertDescription>
-								</Alert>
-								:
-								roomWithUsers?.data.map((userroom) => (
-									<div key={userroom.user.id} className="w-full px-8 py-3 flex justify-between items-start cursor-pointer hover:bg-muted/50">
-										<div className="flex items-start gap-2">
-											<Avatar>
-												<AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-												<AvatarFallback>CN</AvatarFallback>
-											</Avatar>
-											<div>
-												<p className="text-base">{userroom.user.name}</p>
-												<p className="text-muted-foreground text-sm">{userroom.user.email}</p>
-											</div>
-										</div>
-										<div>
-											{["OWNER", "ADMIN"].includes(userroom.role)
-												&&
-												<Badge variant="secondary">Group Admin</Badge>
-											}
-										</div>
-									</div>
-								))
+								<div>
+									{["OWNER", "ADMIN"].includes(userroom.role)
+										&&
+										<Badge variant="secondary">Group Admin</Badge>
+									}
+								</div>
+							</div>
+						))
 					}
 				</div>
 			</CardContent>

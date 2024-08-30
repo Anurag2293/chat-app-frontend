@@ -3,12 +3,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Room } from "@prisma/client";
 
-import { GetAvatarFallback, ShortenRoomDescription } from "@/lib/chat-room";
+import { getAvatarFallback, shortenRoomDescription } from "@/lib/chat-room";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import PhoneIcon from "@/components/icons/phone";
 import SendIcon from "@/components/icons/send";
@@ -36,7 +37,8 @@ const chatFormSchema = z.object({
 
 type ChatRoomProps = {
   toggleShowRoomDetails: () => void,
-  roomDetails: Room
+  roomDetails: Room | undefined,
+  isLoadingRoomDetails: boolean
 }
 
 export default function ChatRoom(props: ChatRoomProps) {
@@ -60,12 +62,12 @@ export default function ChatRoom(props: ChatRoomProps) {
       <div className="p-3 flex border-b items-center">
         <div className="flex flex-grow items-center gap-2 cursor-pointer" onClick={props.toggleShowRoomDetails}>
           <Avatar className="border w-10 h-10">
-            <AvatarImage src={props.roomDetails.profileImage ?? ""} alt="Profile" />
-            <AvatarFallback>{GetAvatarFallback(props.roomDetails.name ?? "")}</AvatarFallback>
+            <AvatarImage src={props.roomDetails?.profileImage ?? ""} alt="Profile" />
+            <AvatarFallback>{getAvatarFallback(props.roomDetails?.name ?? "")}</AvatarFallback>
           </Avatar>
           <div className="grid gap-0.5">
-            <p className="text-sm font-medium leading-none">{props.roomDetails.name}</p>
-            <p className="text-xs text-muted-foreground">{ShortenRoomDescription(props.roomDetails.description ?? "")}</p>
+            <p className="text-sm font-medium leading-none">{props.roomDetails?.name}</p>
+            <p className="text-xs text-muted-foreground">{shortenRoomDescription(props.roomDetails?.description ?? "")}</p>
           </div>
         </div>
         <div className="flex items-center gap-1">
