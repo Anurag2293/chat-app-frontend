@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "@/styles/globals.css";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
 
-import { ThemeProvider } from "@/providers/theme-provider";
-import { SocketStoreProvider } from "@/providers/socket-store-provider";
-import { Toaster } from "@/components/ui/toaster";
+import "@/styles/globals.css";
+import { ourFileRouter } from "@/app/api/uploadthing/core";
+import Providers from "@/providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,21 +19,16 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+
+
 	return (
-		<html lang="en">
-			<body className={inter.className}>
-				<SocketStoreProvider>
-					<ThemeProvider
-						attribute="class"
-						defaultTheme="dark"
-						enableSystem
-						disableTransitionOnChange
-					>
-						{children}
-					</ThemeProvider>
-					<Toaster />
-				</SocketStoreProvider>
+		<html lang="en" suppressHydrationWarning={true}>
+			<body className={inter.className} suppressHydrationWarning={true}>
+				<NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+				<Providers>
+					{children}
+				</Providers>
 			</body>
-		</html>
+		</html >
 	);
 }

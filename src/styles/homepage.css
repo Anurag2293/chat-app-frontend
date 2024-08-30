@@ -1,0 +1,24 @@
+
+@property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+.hero-card::after, .hero-card::before {
+    /* background-image: conic-gradient(from var(--angle), transparent 70%, blue); */
+
+    animation: 3s spin linear infinite;
+
+    background-image: conic-gradient(from var(--angle), #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
+    /* We can't animate gradient in css.*/
+} 
+
+@keyframes spin{
+    from {
+        --angle: 0deg;
+    }
+    to {
+        --angle: 360deg;
+    }
+}

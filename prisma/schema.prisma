@@ -7,23 +7,70 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Message {
-  id      String   @id @default(uuid())
-  userID  String
-  roomID  String
-  content String
-  sentAt  DateTime @default(now())
+model User {
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique
+  createdAt DateTime   @default(now())
+  groups    UserRoom[]
+  messages  Message[]
 }
 
 model Room {
-  name      String
-  createdAt DateTime @default(now())
-  id        String   @id @default(uuid())
+  name         String
+  createdAt    DateTime   @default(now())
+  id           String     @id @default(uuid())
+  description  String
+  profileImage String?
+  users        UserRoom[]
+  messages     Message[]
+  RoomLink     RoomLink?
 }
 
-model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  createdAt DateTime @default(now())
+model Message {
+  id         String     @id @default(uuid())
+  userID     String
+  roomID     String
+  content    String
+  image      String?
+  senderType SenderType
+  sentAt     DateTime   @default(now())
+
+  room Room @relation(fields: [roomID], references: [id])
+  user User @relation(fields: [userID], references: [id])
+}
+
+model UserRoom {
+  id       String   @id @default(uuid())
+  roomID   String
+  userID   String
+  role     Role     @default(MEMBER)
+  joinedAt DateTime @default(now())
+  room     Room     @relation(fields: [roomID], references: [id])
+  user     User     @relation(fields: [userID], references: [id])
+
+  @@unique([roomID, userID])
+}
+
+model RoomLink {
+  id         String   @id @default(uuid())
+  roomID     String   @unique
+  expiresAt  DateTime
+  usageCount Int
+  joinLink   String   @unique
+
+  room Room @relation(fields: [roomID], references: [id])
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum SenderType {
+  USER
+  BOT
+  SYSTEM
+  GROUP
 }

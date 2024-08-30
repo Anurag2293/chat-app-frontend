@@ -14,9 +14,9 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 import MessageCircleIcon from "@/components/icons/message-circle";
-import { SignInButton } from "@/app/components/signin-button";
-import { SignOutButton } from "@/app/components/signout-button";
-import { SignUpButton } from "@/app/components/signup-button";
+import { SignInButton } from "@/app/__components/signin-button";
+import { SignOutButton } from "@/app/__components/signout-button";
+import { SignUpButton } from "@/app/__components/signup-button";
 
 export default async function Navbar() {
     const session = await auth();
