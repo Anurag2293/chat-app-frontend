@@ -48,6 +48,7 @@ export default function Home() {
                   height={400}
                   alt="Chatter App"
                   className="overflow-hidden rounded-xl object-cover"
+                  priority
                 />
               </div>
             </div>

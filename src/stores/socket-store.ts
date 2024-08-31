@@ -31,27 +31,18 @@ export const defaultSocketInitState: SocketState = {
 export const createSocketStore = (
   initState: SocketState = defaultSocketInitState
 ) => {
-  const socket = io("http://localhost:8080", {
+  const socket = io("https://chat-app-backend-165i.onrender.com", {
     auth: {
       email: ""
     }
   });
-  // const { toast } = useToast();
-  // const router = useRouter();
-
+  
   socket.on("connect", () => {
     console.log("Connected to server: ", socket.id);
-    // return toast({
-    //   description: "Connected to server: " + socket.id,
-    // });
   });
 
   socket.on("disconnect", () => {
     console.log("Disconnected to server: ", socket.id);
-    // return toast({
-    //   variant: "destructive",
-    //   description: "Disconnected from server.",
-    // });
   });
 
   return createStore<SocketStore>()((set) => {
