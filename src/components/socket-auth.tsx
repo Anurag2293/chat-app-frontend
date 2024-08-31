@@ -1,17 +1,35 @@
 'use client'
 
-import { useSocketStore } from "@/providers/socket-store-provider"
-import type { Session } from "next-auth"
+import { useEffect } from "react";
+import type { Session } from "next-auth";
+import { io } from "socket.io-client";
 
-export const SocketAuth = ({ session }: { session: Session}) => {
-    const { socket } = useSocketStore(s => s);
+import { useSocketStore } from "@/providers/socket-store-provider";
 
-    if (socket) {   
-        socket.on("get-auth", (callback: (userEmail: string) => {}) => {
-            // console.log("Get Auth");
-            console.log({ userEmail: session.user?.email, socketID: socket.id });
-            callback(session.user?.email ?? "");
-        })
+export const SocketAuth = (props: { session: Session }) => {
+    const { socket, setSocket } = useSocketStore(s => s);
+
+    useEffect(() => {
+        const initializeSocket = () => {
+            const newSocket = io("http://localhost:8080", {
+                auth: {
+                    email: props.session.user?.email
+                }
+            });
+            setSocket(newSocket);
+        }
+        initializeSocket();
+    }, []);
+
+    if (socket) {
+        socket.on("connect", () => {
+            console.log("Connected to server: ", socket.id);
+        });
+
+        socket.on("disconnect", () => {
+            console.log("Disconnected to server: ", socket.id);
+        });
     }
+
     return (<></>);
 }
