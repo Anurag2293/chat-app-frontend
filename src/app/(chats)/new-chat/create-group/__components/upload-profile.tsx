@@ -1,15 +1,13 @@
-import { useState, useCallback } from "react";
+import { useCallback, type Dispatch, type SetStateAction } from "react";
 import { useDropzone } from "@uploadthing/react";
 import { generateClientDropzoneAccept } from "uploadthing/client";
-import type { Dispatch, SetStateAction } from "react";
+import { motion } from "framer-motion"
+import { ImagePlus } from 'lucide-react';
 
 import { useUploadThing } from "@/lib/uploadthing";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/components/ui/use-toast";
-
-import UploadIcon from "@/components/icons/upload";
 
 type ProfileImageProps = {
   profileImageURL: string;
@@ -28,11 +26,11 @@ export function ProfileImageUploader(props: ProfileImageProps) {
         props.setProfileImageURL(res[0].url);
         toast({
           title: "Image Uploaded Successfully!",
-          description: res[0].url,
         });
       },
       onUploadError: () => {
         console.log("error occurred while uploading");
+        props.setProfileImageURL('');
         toast({
           title: "Error uploading image!",
           variant: "destructive",
@@ -44,13 +42,10 @@ export function ProfileImageUploader(props: ProfileImageProps) {
     },
   );
 
-  const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      console.log(acceptedFiles);
-      startUpload(acceptedFiles);
-    },
-    [startUpload],
-  );
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    props.setProfileImageURL('');
+    startUpload(acceptedFiles);
+  }, [startUpload, props.setProfileImageURL]);
 
   const fileTypes = permittedFileInfo?.config
     ? Object.keys(permittedFileInfo?.config)
@@ -62,32 +57,35 @@ export function ProfileImageUploader(props: ProfileImageProps) {
   });
 
   return (
-    <div className="grid gap-2">
-      <Label htmlFor="profile-picture">Profile Picture</Label>
-      <div className="flex items-center gap-2">
+    <div className="space-y-2">
+      <Label htmlFor="group-image" className="sr-only">Group Image</Label>
+      <div className="flex items-center justify-center w-full" {...getRootProps()}>
         <div
-          className="button py-[9px] px-4 border rounded-md flex items-center justify-center flex-1 cursor-pointer hover:bg-secondary"
-          {...getRootProps()}
+          className={`relative flex flex-col items-center justify-center w-32 h-32 border-dashed border-red-600 rounded-full cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 overflow-hidden`}
         >
-          <UploadIcon className="mr-2 h-4 w-4" />
-          <p className="text-sm font-normal">
-            {isUploading ? "Uploading..." : "Upload Image"}
-          </p>
-          <Input id="picture" type="file" {...getInputProps()} />
+          {props.profileImageURL.length === 0 && isUploading &&
+            <motion.div
+              className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            />
+          }
+          {props.profileImageURL.length === 0 && isUploading &&
+            <div className="absolute inset-2 rounded-full flex items-center justify-center">
+              <span className="text-primary font-semibold">Upoading...</span>
+            </div>
+          }
+          {props.profileImageURL.length > 0 && (
+            <img src={props.profileImageURL} alt="Group" className="w-full h-full object-cover rounded-full" />
+          )}
+          {props.profileImageURL.length === 0 && !isUploading && (
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              <ImagePlus className="w-8 h-8 mb-2 text-gray-500" />
+              <p className="text-sm text-gray-500 dark:text-gray-400">Upload image</p>
+            </div>
+          )}
+          <Input id="group-image" type="file" accept="image/*" className="hidden" {...getInputProps()} />
         </div>
-
-        {props.profileImageURL.length > 0 && (
-          <Avatar>
-            <AvatarImage src={props.profileImageURL} />
-            <AvatarFallback></AvatarFallback>
-          </Avatar>
-        )}
-
-        {props.profileImageURL.length === 0 && (
-          <div className="flex-1 text-sm text-muted-foreground">
-            JPG, PNG or GIF up to 1MB
-          </div>
-        )}
       </div>
     </div>
   );

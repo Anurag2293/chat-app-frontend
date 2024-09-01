@@ -2,14 +2,14 @@
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
-import CreateGroupComponent from "./__components/create-group";
+import CreateGroup from "./__components/create-group";
 
-export default async function CreateGroup() {
+export default async function CreateNewGroup() {
   const session = await auth();
 
   if (!session || !session.user) {
     return redirect("/");
   }
 
-  return <CreateGroupComponent />;
+  return <CreateGroup />
 }
