@@ -1,9 +1,13 @@
 import { z } from "zod";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Room } from "@prisma/client";
 import { useMutation } from "@tanstack/react-query";
+import { useToast } from "@/components/ui/use-toast";
+import { ArrowLeft } from "lucide-react";
 
+import { postRoomMessage } from "@/api/message";
 import { getAvatarFallback, shortenRoomDescription } from "@/lib/chat-room";
 
 import { Button } from "@/components/ui/button";
@@ -17,8 +21,6 @@ import SmileIcon from "@/components/icons/smile";
 import SearchIcon from "@/components/icons/search";
 
 import Messages from "./messages";
-import { postRoomMessage } from "@/api/message";
-import { useToast } from "@/components/ui/use-toast";
 
 const chatFormSchema = z.object({
   chatMessage: z.string(),
@@ -70,8 +72,10 @@ export default function ChatRoom(props: ChatRoomProps) {
 
   return (
     <div className="flex flex-col h-screen w-full mx-auto overflow-hidden">
-
       <div className="p-3 border-b flex items-center">
+        <Link href="/chat" className="mr-4 cursor-pointer">
+          <ArrowLeft />
+        </Link>
         <div className="flex flex-grow items-center gap-2 cursor-pointer" onClick={props.toggleShowRoomDetails}>
           <Avatar className="border w-10 h-10">
             <AvatarImage src={props.roomDetails?.profileImage ?? ""} alt="Profile" />

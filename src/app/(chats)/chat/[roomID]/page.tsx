@@ -41,7 +41,7 @@ export default function ChatRoomWithID() {
   }
 
   return (
-    <div className="w-full h-screen">
+    <div className="h-screen col-span-1 md:col-span-2">
       {isLoading &&
         <div className="h-full flex justify-center items-center">
           <LoadingSpinner size={64} />

@@ -1,12 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import Navbar from "./__components/navbar";
 import "@/styles/homepage.css";
+import { auth } from "@/auth";
 
-import { BASE_URL } from "@/lib/url";
+import { SignUpButton } from "./__components/signup-button";
+import Navbar from "./__components/navbar";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+
   return (
     <div className="flex flex-col h-screen max-h-screen">
       <Navbar />
@@ -15,7 +18,7 @@ export default function Home() {
           <div className="container grid items-end gap-6 px-4 md:px-6 lg:grid-cols-2 lg:gap-10">
             <div className="space-y-4">
               <h1 className="text-3xl font-bold tracking-tighter text-primary-foreground dark:text-white sm:text-4xl md:text-5xl">
-                Connect with friends and family {BASE_URL}
+                Connect with friends and family
               </h1>
               <p className="max-w-[600px] text-primary-foreground/80 dark:text-gray-100 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                 Chatter is a modern chat app that makes it easy to stay
@@ -31,13 +34,7 @@ export default function Home() {
                 >
                   Go To Chat
                 </Link>
-                <Link
-                  href="#"
-                  className="inline-flex h-10 items-center justify-center rounded-md border border-primary-foreground bg-primary px-8 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                  prefetch={false}
-                >
-                  Sign Up
-                </Link>
+                {(!session || !session.user) && <SignUpButton content="Sign Up" />}
               </div>
             </div>
             <div>
