@@ -1,6 +1,10 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-export const OtherChat = () => {
+type OtherChatProps = {
+	content: string
+}
+
+export const OtherChat = (props: OtherChatProps) => {
 	return (
 		<div className="flex items-start gap-4">
 			<Avatar className="w-10 h-10">
@@ -13,7 +17,7 @@ export const OtherChat = () => {
 					<div className="text-xs text-muted-foreground">2:39 PM</div>
 				</div>
 				<div className="bg-card rounded-lg p-3 max-w-[80%]">
-					<p>Hey everyone, just wanted to share some updates on the new design system we're working on.</p>
+					<p>{props.content}</p>
 				</div>
 			</div>
 		</div>

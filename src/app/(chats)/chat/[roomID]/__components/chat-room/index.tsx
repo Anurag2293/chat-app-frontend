@@ -2,6 +2,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Room } from "@prisma/client";
+import { useMutation } from "@tanstack/react-query";
 
 import { getAvatarFallback, shortenRoomDescription } from "@/lib/chat-room";
 
@@ -16,6 +17,8 @@ import SmileIcon from "@/components/icons/smile";
 import SearchIcon from "@/components/icons/search";
 
 import Messages from "./messages";
+import { postRoomMessage } from "@/api/message";
+import { useToast } from "@/components/ui/use-toast";
 
 const chatFormSchema = z.object({
   chatMessage: z.string(),
@@ -28,6 +31,25 @@ type ChatRoomProps = {
 }
 
 export default function ChatRoom(props: ChatRoomProps) {
+  const { toast } = useToast();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: postRoomMessage,
+    onSuccess: () => {
+      // toast({
+      //   title: "message sent successfully!"
+      // })
+      console.log("message sent successfully!");
+    },
+    onError: (error) => {
+      toast({
+        title: "Error sending message",
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
+  })
+
   const form = useForm<z.infer<typeof chatFormSchema>>({
     resolver: zodResolver(chatFormSchema),
     defaultValues: {
@@ -35,8 +57,11 @@ export default function ChatRoom(props: ChatRoomProps) {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof chatFormSchema>) => {
-    // TODO: sendMessageToRoom(String(roomID), values.chatMessage);
+  const onSubmit = (values: z.infer<typeof chatFormSchema>) => {;
+    if (!props.roomDetails) {
+      return;
+    }
+    mutate({roomID: props.roomDetails.id, messageContent: values.chatMessage});
     form.setValue("chatMessage", "", {
       shouldValidate: true,
       shouldDirty: true,
