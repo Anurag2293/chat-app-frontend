@@ -1,15 +1,7 @@
-import NextAuth, { type DefaultSession } from "next-auth";
+import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 
 import prisma from "@/lib/db";
-
-declare module "next-auth" {
-	interface Session {
-		user: {
-			id: string
-		} & DefaultSession["user"]
-	}
-}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
 	providers: [Google],
@@ -34,23 +26,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			}
 			return true;
 		},
-		async session({ session }) {
-			console.log({session});
-			const findUser = await prisma.user.findFirst({
-				where: {
-					email: session.user.email
-				}
-			});
-			if (!findUser) {
-				return session;
-			}
-			return {
-				...session,
-				user: {
-					...session.user,
-					id: findUser.id,
-				}
-			}
-		}
 	}
 });
