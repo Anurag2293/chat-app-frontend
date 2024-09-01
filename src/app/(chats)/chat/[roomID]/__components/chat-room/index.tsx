@@ -67,7 +67,12 @@ export default function ChatRoom(props: ChatRoomProps) {
         </div>
       </div>
 
-      <Messages />
+      {!props.roomDetails &&
+        <div className="flex-1"></div>
+      }
+      {props.roomDetails &&
+        <Messages roomID={props.roomDetails.id} />
+      }
 
       <Form {...form}>
         <form

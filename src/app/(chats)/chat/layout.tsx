@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import PlusIcon from "@/components/icons/plus";
 
 import UserContacts from "./__components/user-contacts";
+import React from "react";
 
 export const metadata: Metadata = {
   title: "Chat App - Room",
@@ -38,7 +39,10 @@ export default function ChatLayout({
             </form>
           </div>
           <div className="grid gap-2">
-            <UserContacts />
+            <React.Suspense fallback={<div className="w-full my-4 text-lg">Loading...</div>}>
+              <UserContacts />
+            </React.Suspense>
+
           </div>
         </div>
         <div className="min-h-screen col-span-1 md:col-span-2">
