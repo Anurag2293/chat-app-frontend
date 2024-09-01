@@ -31,22 +31,22 @@ export default async function Providers({ children }: { children: React.ReactNod
 
 	return (
 		<>
-			{/* <SocketStoreProvider> */}
 			<SessionProvider>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="dark"
-					enableSystem
-					disableTransitionOnChange
-				>
-					<ReactQueryProvider>
-						{children}
-					</ReactQueryProvider>
-				</ThemeProvider>
-				<Toaster />
+				<SocketStoreProvider>
+					<ThemeProvider
+						attribute="class"
+						defaultTheme="dark"
+						enableSystem
+						disableTransitionOnChange
+					>
+						<ReactQueryProvider>
+							{children}
+						</ReactQueryProvider>
+					</ThemeProvider>
+					<Toaster />
+					<SocketAuth session={session} />
+				</SocketStoreProvider>
 			</SessionProvider>
-			{/* <SocketAuth session={session} /> */}
-			{/* </SocketStoreProvider> */}
 		</>
 	);
 }

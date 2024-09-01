@@ -22,6 +22,7 @@ model Room {
   id           String     @id @default(uuid())
   description  String
   profileImage String?
+  type         RoomType   @default(GROUP)
   users        UserRoom[]
   messages     Message[]
   RoomLink     RoomLink?
@@ -73,4 +74,10 @@ enum SenderType {
   BOT
   SYSTEM
   GROUP
+}
+
+enum RoomType {
+  DIRECT
+  GROUP
+  BUSINESS
 }

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Room } from "@prisma/client";
+import { useMutation } from "@tanstack/react-query";
 
 import { getAvatarFallback, shortenRoomDescription } from "@/lib/chat-room";
 
@@ -9,27 +10,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Skeleton } from "@/components/ui/skeleton";
 
-import PhoneIcon from "@/components/icons/phone";
-import SendIcon from "@/components/icons/send";
-import VideoIcon from "@/components/icons/video";
+import PaperclipIcon from "@/components/icons/paper-clip";
+import SettingsIcon from "@/components/icons/settings";
+import SmileIcon from "@/components/icons/smile";
+import SearchIcon from "@/components/icons/search";
 
-const SelfChat = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="flex w-max max-w-[65%] flex-col gap-2 rounded-full px-4 py-2 text-sm ml-auto bg-primary text-primary-foreground">
-      {children}
-    </div>
-  );
-};
-
-const OtherChat = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="flex w-max max-w-[65%] flex-col gap-2 rounded-full px-4 py-2 text-sm bg-muted">
-      {children}
-    </div>
-  );
-};
+import Messages from "./messages";
+import { postRoomMessage } from "@/api/message";
+import { useToast } from "@/components/ui/use-toast";
 
 const chatFormSchema = z.object({
   chatMessage: z.string(),
@@ -42,6 +31,25 @@ type ChatRoomProps = {
 }
 
 export default function ChatRoom(props: ChatRoomProps) {
+  const { toast } = useToast();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: postRoomMessage,
+    onSuccess: () => {
+      // toast({
+      //   title: "message sent successfully!"
+      // })
+      console.log("message sent successfully!");
+    },
+    onError: (error) => {
+      toast({
+        title: "Error sending message",
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
+  })
+
   const form = useForm<z.infer<typeof chatFormSchema>>({
     resolver: zodResolver(chatFormSchema),
     defaultValues: {
@@ -49,8 +57,11 @@ export default function ChatRoom(props: ChatRoomProps) {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof chatFormSchema>) => {
-    // TODO: sendMessageToRoom(String(roomID), values.chatMessage);
+  const onSubmit = (values: z.infer<typeof chatFormSchema>) => {;
+    if (!props.roomDetails) {
+      return;
+    }
+    mutate({roomID: props.roomDetails.id, messageContent: values.chatMessage});
     form.setValue("chatMessage", "", {
       shouldValidate: true,
       shouldDirty: true,
@@ -58,8 +69,9 @@ export default function ChatRoom(props: ChatRoomProps) {
   };
 
   return (
-    <div className="relative h-full">
-      <div className="p-3 flex border-b items-center">
+    <div className="flex flex-col h-screen w-full mx-auto overflow-hidden">
+
+      <div className="p-3 border-b flex items-center">
         <div className="flex flex-grow items-center gap-2 cursor-pointer" onClick={props.toggleShowRoomDetails}>
           <Avatar className="border w-10 h-10">
             <AvatarImage src={props.roomDetails?.profileImage ?? ""} alt="Profile" />
@@ -72,56 +84,51 @@ export default function ChatRoom(props: ChatRoomProps) {
         </div>
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="icon">
-            <span className="sr-only">Call</span>
-            <PhoneIcon className="h-4 w-4" />
+            <SearchIcon className="w-4 h-4" />
           </Button>
           <Button variant="ghost" size="icon">
-            <span className="sr-only">Video call</span>
-            <VideoIcon className="h-4 w-4" />
+            <SettingsIcon className="w-4 h-4" />
           </Button>
         </div>
       </div>
-      <div className="grid gap-4 p-3">
-        {/* {messages.map((chat, index) => {
-          if (chat.senderID === socket?.id) {
-            return (
-              <SelfChat key={index}>
-                {chat.senderID}: {chat.text}
-              </SelfChat>
-            );
-          }
-          return (
-            <OtherChat key={index}>
-              {chat.senderID}: {chat.text}
-            </OtherChat>
-          );
-        })} */}
-      </div>
-      <div className="border-t absolute bottom-0 w-full">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex w-full items-center space-x-2 p-3"
-          >
-            <FormField
-              control={form.control}
-              name="chatMessage"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormControl autoFocus>
-                    <Input placeholder="Type your message..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" size="icon">
-              <span className="sr-only">Send</span>
-              <SendIcon className="h-4 w-4" />
-            </Button>
-          </form>
-        </Form>
-      </div>
+
+      {!props.roomDetails &&
+        <div className="flex-1"></div>
+      }
+      {props.roomDetails &&
+        <Messages roomID={props.roomDetails.id} />
+      }
+
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="p-3 flex items-center gap-3 border-t"
+        >
+          <FormField
+            control={form.control}
+            name="chatMessage"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormControl autoFocus>
+                  <Input
+                    {...field}
+                    placeholder="Type your message..."
+                    className="flex-1 bg-muted rounded-full pr-12"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button variant="ghost" size="icon">
+            <PaperclipIcon className="w-5 h-5" />
+          </Button>
+          <Button variant="ghost" size="icon">
+            <SmileIcon className="w-5 h-5" />
+          </Button>
+          <Button size="sm">Send</Button>
+        </form>
+      </Form>
     </div>
-  );
+  )
 }

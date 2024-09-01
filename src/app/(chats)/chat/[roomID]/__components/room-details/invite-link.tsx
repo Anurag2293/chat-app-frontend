@@ -3,6 +3,7 @@ import { TiArrowForward } from "react-icons/ti";
 import { useQuery } from "@tanstack/react-query";
 
 import { postJoinRoomLink } from "@/api/join-room";
+import { BASE_URL } from "@/lib/url";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
@@ -31,7 +32,7 @@ export default function GroupInviteLink(props: GroupInviteLinkProps) {
         if (!data) {
             return;
         }
-        const joinLink = `http://localhost:3000/new-chat/join/${data.data}`
+        const joinLink = `${BASE_URL}/new-chat/join/${data.data}`
         navigator.clipboard.writeText(joinLink);
         toast({
             description: "Copied Joining Link successfully!"

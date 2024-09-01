@@ -11,7 +11,7 @@ export async function getUserRooms(): Promise<ResultType<RoomWithInfo[]>> {
 		method: "GET"
 	});
 	const result: ResultType<RoomWithInfo[]> = await response.json();
-	if (!result.success) {
+	if (!result.success || !result.data) {
 		throw new Error(result.message);
 	}
 	return result;
