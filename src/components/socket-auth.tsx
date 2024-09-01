@@ -19,7 +19,7 @@ export const SocketAuth = (props: { session: Session }) => {
             setSocket(newSocket);
         }
         initializeSocket();
-    }, [setSocket]);
+    }, [setSocket, props.session.user?.email]);
 
     if (socket) {
         socket.on("connect", () => {
