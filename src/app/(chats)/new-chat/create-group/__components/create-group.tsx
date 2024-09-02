@@ -27,7 +27,6 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import UploadIcon from "@/components/icons/upload";
 import { useToast } from "@/components/ui/use-toast";
 
 import { patchRoomWithProfileImage, postRoom } from "@/api/room";

@@ -28,7 +28,7 @@ const chatFormSchema = z.object({
 
 type ChatRoomProps = {
   toggleShowRoomDetails: () => void,
-  roomDetails: Room | undefined,
+  roomDetails: Room,
   isLoadingRoomDetails: boolean
 }
 
@@ -38,9 +38,6 @@ export default function ChatRoom(props: ChatRoomProps) {
   const { mutate, isPending } = useMutation({
     mutationFn: postRoomMessage,
     onSuccess: () => {
-      // toast({
-      //   title: "message sent successfully!"
-      // })
       console.log("message sent successfully!");
     },
     onError: (error) => {
@@ -96,13 +93,8 @@ export default function ChatRoom(props: ChatRoomProps) {
         </div>
       </div>
 
-      {!props.roomDetails &&
-        <div className="flex-1"></div>
-      }
-      {props.roomDetails &&
-        <Messages roomID={props.roomDetails.id} />
-      }
-
+      <Messages roomID={props.roomDetails.id} />
+      
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

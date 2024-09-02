@@ -30,7 +30,10 @@ export default function ChatRoomWithID() {
   });
 
   const toggleShowRoomDetails = () => setShowRoomDetails(!showRoomDetails);
-  const roomDetails = data?.data.filter((value) => value.roomID === roomID)[0].room;
+  // const roomDetails = data?.data.filter((value) => value.roomID === roomID)[0].room;
+
+  const roomData = data?.data.find((value) => value.roomID === roomID);
+  const roomDetails = roomData?.room;
 
   if (isError) {
     toast({
@@ -61,7 +64,7 @@ export default function ChatRoomWithID() {
       }
 
       <div className="h-full grid grid-cols-1 md:grid-cols-2">
-        {!isError &&
+        {!isLoading && !isError && roomDetails &&
           <div className={showRoomDetails ? 'col-span-1 hidden md:block' : 'col-span-2'}>
             <ChatRoom
               toggleShowRoomDetails={toggleShowRoomDetails}

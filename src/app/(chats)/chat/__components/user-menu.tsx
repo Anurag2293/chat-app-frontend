@@ -8,7 +8,8 @@ import {
     SunMoon,
     Sun,
     Moon,
-    MonitorCog
+    MonitorCog,
+    Users
 } from "lucide-react";
 
 import {
@@ -41,7 +42,7 @@ export function UserMenu({ children }: { children: React.ReactNode }) {
                 <DropdownMenuGroup>
                     <DropdownMenuItem>
                         <Link href="/new-chat/create-group" className="w-full flex">
-                            <LogOut className="mr-2 h-4 w-4" />
+                            <Users className="mr-2 h-4 w-4" />
                             <span>Create New Group</span>
                         </Link>
                     </DropdownMenuItem>

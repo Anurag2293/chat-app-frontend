@@ -61,7 +61,7 @@ export function ProfileImageUploader(props: ProfileImageProps) {
       <Label htmlFor="group-image" className="sr-only">Group Image</Label>
       <div className="flex items-center justify-center w-full" {...getRootProps()}>
         <div
-          className={`relative flex flex-col items-center justify-center w-32 h-32 border-dashed border-red-600 rounded-full cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 overflow-hidden`}
+          className={`relative flex flex-col items-center justify-center w-32 h-32 rounded-full cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 overflow-hidden`}
         >
           {props.profileImageURL.length === 0 && isUploading &&
             <motion.div
