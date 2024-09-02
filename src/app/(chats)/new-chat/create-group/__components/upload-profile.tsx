@@ -8,6 +8,7 @@ import { useUploadThing } from "@/lib/uploadthing";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
+import Image from "next/image";
 
 type ProfileImageProps = {
   profileImageURL: string;
@@ -45,7 +46,7 @@ export function ProfileImageUploader(props: ProfileImageProps) {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     props.setProfileImageURL('');
     startUpload(acceptedFiles);
-  }, [startUpload, props.setProfileImageURL]);
+  }, [startUpload, props]);
 
   const fileTypes = permittedFileInfo?.config
     ? Object.keys(permittedFileInfo?.config)
@@ -76,7 +77,13 @@ export function ProfileImageUploader(props: ProfileImageProps) {
             </div>
           }
           {props.profileImageURL.length > 0 && (
-            <img src={props.profileImageURL} alt="Group" className="w-full h-full object-cover rounded-full" />
+            <Image 
+              src={props.profileImageURL} 
+              alt="Group" 
+              className="w-full h-full object-cover rounded-full" 
+              width={50}
+              height={50}
+            />
           )}
           {props.profileImageURL.length === 0 && !isUploading && (
             <div className="flex flex-col items-center justify-center pt-5 pb-6">
