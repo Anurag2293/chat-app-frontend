@@ -4,7 +4,7 @@ import Image from "next/image";
 import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 
-import { SignUpButton } from "./__components/signup-button";
+import { SignUpButton } from "../components/navbar/signup-button";
 import Navbar from "@/components/navbar";
 
 import "@/styles/homepage.css";
@@ -13,10 +13,10 @@ export default async function Home() {
   const session = await auth();
 
   return (
-    <div className="flex flex-col h-screen max-h-screen">
+    <div className="h-screen flex flex-col">
       <Navbar session={session} />
-      <main className="">
-        <section className="py-12 md:py-24 lg:py-28">
+      <main className="w-full flex-grow">
+        <section className="py-12 md:py-22 lg:py-24">
           <div className="container grid items-end gap-6 px-4 md:px-6 lg:grid-cols-2 lg:gap-10">
             <div className="space-y-4">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
