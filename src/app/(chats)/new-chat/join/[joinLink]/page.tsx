@@ -1,10 +1,7 @@
-'use client'
+import { auth } from "@/auth";
 
-import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-
-import { getJoinRoom } from "@/api/join-room";
-import { useToast } from "@/components/ui/use-toast";
+import Navbar from "@/components/navbar";
+import JoinRoomCard from "./__components/join-room";
 
 type JoinRoomProps = {
     params: {
@@ -12,36 +9,13 @@ type JoinRoomProps = {
     }
 }
 
-export default function JoinRoom(props: JoinRoomProps) {
-    const router = useRouter();
-    const { toast } = useToast();
-
-    const { data, isLoading, error } = useQuery({
-        queryFn: () => getJoinRoom(props.params.joinLink),
-        queryKey: ['getJoinRoom']
-    });
-
-    if (error || !data?.success) {
-        router.push("/chat");
-        toast({
-            title: "Error joining room",
-            description: error?.message,
-            variant: "destructive"
-        });
-    }
-
-    if (data && data.success) {
-        router.push(`/chat/${data.data.roomID}`);
-        toast({
-            title: "Joined room successfully!",
-        });
-    }
+export default async function JoinRoom(props: JoinRoomProps) {
+    const session = await auth();
 
     return (
-        <div>
-            {isLoading && <div>
-                Joining Room...     
-            </div>}
+        <div className="h-screen flex flex-col">
+            <Navbar session={session}  />
+            <JoinRoomCard joinLink={props.params.joinLink} />
         </div>
     )
 

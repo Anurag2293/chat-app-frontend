@@ -1,26 +1,28 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import "@/styles/homepage.css";
 import { auth } from "@/auth";
+import { Button } from "@/components/ui/button";
 
 import { SignUpButton } from "./__components/signup-button";
-import Navbar from "./__components/navbar";
+import Navbar from "@/components/navbar";
+
+import "@/styles/homepage.css";
 
 export default async function Home() {
   const session = await auth();
 
   return (
     <div className="flex flex-col h-screen max-h-screen">
-      <Navbar />
+      <Navbar session={session} />
       <main className="">
-        <section className="bg-primary dark:bg-black dark:text-white py-12 md:py-24 lg:py-28">
+        <section className="py-12 md:py-24 lg:py-28">
           <div className="container grid items-end gap-6 px-4 md:px-6 lg:grid-cols-2 lg:gap-10">
             <div className="space-y-4">
-              <h1 className="text-3xl font-bold tracking-tighter text-primary-foreground dark:text-white sm:text-4xl md:text-5xl">
+              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
                 Connect with friends and family
               </h1>
-              <p className="max-w-[600px] text-primary-foreground/80 dark:text-gray-100 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+              <p className="max-w-[600px] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                 Chatter is a modern chat app that makes it easy to stay
                 connected with the people who matter most. With features like
                 instant messaging, voice and video calls, and group chats, you
@@ -30,10 +32,11 @@ export default async function Home() {
                 {(session && session.user) &&
                   <Link
                     href="/chat"
-                    className="inline-flex h-10 items-center justify-center rounded-md bg-primary-foreground px-8 text-sm font-medium text-primary border shadow transition-colors hover:bg-primary-foreground/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     prefetch={false}
                   >
-                    Go To Chat
+                    <Button>
+                      Go To Chat
+                    </Button>
                   </Link>
                 }
                 {(!session || !session.user) && <SignUpButton content="Sign Up" />}

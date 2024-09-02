@@ -1,7 +1,8 @@
+'use client'
 
 import Link from "next/link";
+import { type Session } from "next-auth";
 
-import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -18,31 +19,33 @@ import { SignInButton } from "@/app/__components/signin-button";
 import { SignOutButton } from "@/app/__components/signout-button";
 import { SignUpButton } from "@/app/__components/signup-button";
 
-export default async function Navbar() {
-    const session = await auth();
+type NavbarProps = {
+    session: Session | null
+}
 
+export default function Navbar(props: NavbarProps) {
     return (
-        <header className="bg-primary text-primary-foreground dark:bg-black dark:text-white py-6 px-4 md:px-6">
+        <header className="py-6 px-4 md:px-6">
             <div className="container flex items-center justify-between px-0">
                 <Link href="/" className="flex items-center gap-2" prefetch={false}>
                     <MessageCircleIcon className="h-6 w-6" />
                     <span className="text-xl font-bold">Chatter</span>
                 </Link>
                 <div className="flex items-center gap-4">
-                    {(!session || !session.user) && <SignInButton content="Sign In" />}
-                    {(!session || !session.user) && <SignUpButton content="Sign Up" />}
-                    {(session && session.user) &&
+                    {(!props.session || !props.session.user) && <SignInButton content="Sign In" />}
+                    {(!props.session || !props.session.user) && <SignUpButton content="Sign Up" />}
+                    {(props.session && props.session.user) &&
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon" className="rounded-full">
-                                    <Avatar className="h-8 w-8">
-                                        <AvatarImage src={session.user.image || ""} />
-                                        <AvatarFallback>{session.user.name?.split(" ").map(word => word.substring(0, 1).toUpperCase()).join("").substring(0, 2)}</AvatarFallback>
+                                    <Avatar className="h-12 w-12">
+                                        <AvatarImage src={props.session.user.image || ""} />
+                                        <AvatarFallback>{props.session.user.name?.split(" ").map(word => word.substring(0, 1).toUpperCase()).join("").substring(0, 2)}</AvatarFallback>
                                     </Avatar>
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>{session.user.name}</DropdownMenuLabel>
+                                <DropdownMenuLabel>{props.session.user.name}</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem>
                                     <Link href="#" className="flex items-center gap-2" prefetch={false}>
