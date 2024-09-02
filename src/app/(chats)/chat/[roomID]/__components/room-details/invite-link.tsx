@@ -24,7 +24,7 @@ export default function GroupInviteLink(props: GroupInviteLinkProps) {
     const { toast } = useToast();
 
     const { data, isLoading, isError, error } = useQuery({
-        queryKey: ['getJoinRoomLink'],
+        queryKey: ['postJoinRoomLink'],
         queryFn: () => postJoinRoomLink(props.roomID)
     });
 

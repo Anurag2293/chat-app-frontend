@@ -1,12 +1,17 @@
 
-import type { UserRoom } from "@prisma/client";
+import type { Room } from "@prisma/client";
 import { ResultType } from "@/types/api";
 
-export const getJoinRoom = async (joinLink: string): Promise<ResultType<UserRoom>> => {
+type JoinRoomInfo = {
+    room: Room,
+    participants: number
+}
+
+export const getJoinRoom = async (joinLink: string): Promise<ResultType<JoinRoomInfo>> => {
     const response = await fetch(`/api/join-room?joinLink=${joinLink}`, {
         method: 'GET'
     });
-    const result: ResultType<UserRoom> = await response.json();
+    const result: ResultType<JoinRoomInfo> = await response.json();
     if (!result.success) {
         throw new Error(result.message);
     }
@@ -14,7 +19,7 @@ export const getJoinRoom = async (joinLink: string): Promise<ResultType<UserRoom
 }
 
 export const postJoinRoomLink = async (roomID: string): Promise<ResultType<string>> => {
-    const response = await fetch("/api/join-room", {
+    const response = await fetch("/api/join-room/link", {
         method: 'POST',
         body: JSON.stringify({roomID})
     });

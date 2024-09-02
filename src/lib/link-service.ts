@@ -32,14 +32,23 @@ export const validateLink = async (joinLink: string) => {
     const link = await prisma.roomLink.findFirst({
         where: {
             joinLink
+        },
+        include: {
+            room: true
         }
     });
     
     if (!link || link.expiresAt < new Date()) {
-        return null;
+        return { room: null, participants: null };
     }
+
+    const numberOfParticipants = await prisma.userRoom.count({
+        where: {
+            roomID: link.roomID
+        }
+    });
     
-    const updatedLink = await prisma.roomLink.update({
+    await prisma.roomLink.update({
         where: {
             joinLink
         },
@@ -50,5 +59,5 @@ export const validateLink = async (joinLink: string) => {
         },
     });
 
-    return updatedLink.roomID;
+    return { room: link.room, participants: numberOfParticipants };
 }
