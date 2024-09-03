@@ -44,8 +44,8 @@ export default function Navbar(props: NavbarProps) {
 		<header className="py-6 px-4 md:px-6">
 			<div className="container flex items-center justify-between px-0">
 				<Link href="/" className="flex items-center gap-2" prefetch={false}>
-					<MessageCircleIcon className="h-6 w-6" />
-					<span className="text-xl font-bold">Chatter</span>
+					<MessageCircleIcon className="h-8 w-8" />
+					<span className="text-3xl font-bold">Chatter</span>
 				</Link>
 				<div className="flex items-center gap-4">
 					{(!props.session || !props.session.user) && <SignInButton content="Sign In" />}
