@@ -21,6 +21,7 @@ import SmileIcon from "@/components/icons/smile";
 import SearchIcon from "@/components/icons/search";
 
 import Messages from "./messages";
+import ChatUI from "./chatui";
 
 const chatFormSchema = z.object({
   chatMessage: z.string(),

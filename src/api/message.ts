@@ -1,11 +1,14 @@
-import { ResultType } from "@/types/api";
 import type { Message } from "@prisma/client";
+import { ResultType, UserIncludedMessage } from "@/types/api";
 
-async function getRoomMessages(roomID: string): Promise<ResultType<Message[]>> {
+export async function getRoomMessages(roomID: string): Promise<ResultType<UserIncludedMessage[]>> {
     const response = await fetch(`/api/message?roomID=${roomID}`, {
         method: 'GET'
     });
-    const result: ResultType<Message[]> = await response.json();
+    const result: ResultType<UserIncludedMessage[]> = await response.json();
+	if (!result.success || !result.data) {
+		throw new Error(result.message);
+	}
     return result;
 }
 
