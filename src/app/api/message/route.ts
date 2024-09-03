@@ -26,6 +26,9 @@ export const GET = auth(async function GET(request) {
 				sentAt: {
 					gte: thirtyDaysAgo
 				}
+			},
+			include: {
+				user: true
 			}
 		});
 

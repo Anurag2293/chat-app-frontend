@@ -1,48 +1,44 @@
-import type { Message } from "@prisma/client";
+import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
+
+import { getRoomMessages } from "@/api/message";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { OtherChat } from "./other-chat";
-
-import { ResultType } from "@/types/api";
-
-export async function getRoomMessages(roomID: string): Promise<ResultType<Message[]>> {
-    const response = await fetch(`/api/message?roomID=${roomID}`, {
-        method: 'GET'
-    });
-    const result: ResultType<Message[]> = await response.json();
-	if (!result.success || !result.data) {
-		throw new Error(result.message);
-	}
-    return result;
-}
+import { SelfChat } from "./self-chat";
 
 type MessagesProps = {
 	roomID: string
 }
 
 export default function Messages(props: MessagesProps) {
+	const session = useSession();
 	const { data, isError, isLoading } = useQuery({
 		queryKey: ['room-message'],
 		queryFn: () => getRoomMessages(props.roomID),
-		refetchInterval: 1000
+		refetchInterval: 10000
 	});
 
+	const messages = data?.data;
+
 	return (
-		<ScrollArea className="flex-1 overflow-auto px-3">
-			<div className="grid gap-4">
-				{isLoading && 
-					<div>Loading messages...</div>
-				}
-				{!isLoading && isError &&
-					<div>Error getting message</div>
-				}
-				{!isLoading && !isError && data &&
-					data.data.map((message) => {
-						return <OtherChat key={message.id} content={message.content} />
-					})
-				}
-			</div>
+		<ScrollArea className="flex-1 overflow-auto px-6">
+			{isLoading &&
+				<div>Loading messages...</div>
+			}
+			{!isLoading && isError &&
+				<div>Error getting message</div>
+			}
+			{!isLoading && !isError && data && messages &&
+				messages.map((message, index) => {
+					if (message.user.email === session.data?.user?.email) {
+						const isFirstInGroup = (index === 0) || (messages[index - 1].userID !== message.userID);
+
+						return <SelfChat key={message.id} data={message} isFirstInGroup={isFirstInGroup} />
+					}
+					return <OtherChat key={message.id} data={message} />
+				})
+			}
 		</ScrollArea>
 	)
 }
